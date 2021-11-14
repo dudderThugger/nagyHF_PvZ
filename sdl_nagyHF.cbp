@@ -51,6 +51,10 @@
 			<Add library="dxguid" />
 			<Add directory="$(#sdl2.lib)" />
 		</Linker>
+		<Unit filename="bullets.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="bullets.h" />
 		<Unit filename="debugmalloc.h" />
 		<Unit filename="jatekmenet.c">
 			<Option compilerVar="CC" />
@@ -63,7 +67,24 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="megjelenit.h" />
+		<Unit filename="plants.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="plants.h" />
+		<Unit filename="zombie.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="zombie.h" />
 		<Extensions>
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project output_language="Hungarian" />
+				<doxyfile_build extract_all="1" />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot class_diagrams="1" />
+				<general use_at_in_tags="1" />
+			</DoxyBlocks>
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>

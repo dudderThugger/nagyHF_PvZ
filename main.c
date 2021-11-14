@@ -9,7 +9,13 @@
 #include "jatekmenet.h"
 #include "debugmalloc.h"
 #include "megjelenit.h"
-
+#include "plants.h"
+#include "zombie.h"
+/**
+ *@file main.c
+ *
+ *
+ */
 enum {SOR = 5};
 enum {OSZLOP = 9};
 
@@ -24,7 +30,7 @@ void sdl_init(char const *felirat, int szeles, int magas, SDL_Window **pwindow, 
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
     }
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
         exit(1);
@@ -38,7 +44,6 @@ void sdl_init(char const *felirat, int szeles, int magas, SDL_Window **pwindow, 
     *prenderer = renderer;
 }
 
-
 int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
@@ -46,31 +51,23 @@ int main(int argc, char *argv[]) {
     Jatek uj;
     uj_jatek(&uj,9,5,640,420);
 
+    uj.napocska = 1000;
     SelectedItem selectedItem = NOTHING;
+
+    Pont zombie = {.x = 131, .y = 4};
+    spawn_zombie(zombie, &(uj.zombik_din));
 
     /* ablak letrehozasa */
     SDL_Window *window;
     SDL_Renderer *renderer;
-    sdl_init("SDL peldaprogram", 640, 480, &window, &renderer);
+    sdl_init("Plants vs Zombies nagyon bután", 640, 480, &window, &renderer);
 
 
-
-    SDL_Texture *peashooter = IMG_LoadTexture(renderer, "C:\\Users\\Szelestey\\Desktop\\egyetem\\prog1\\NHF\\sdl\\sdl_nagyHF\\pics\\peashooter.png");
-    if(peashooter == NULL){
-        SDL_Log("Nem tudta megnyitni a kepet: %s\n", SDL_GetError());
-    }
-
-
-
-    /**
-         * Draw background
-         */
-
-    SDL_RenderPresent(renderer);
-
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
+    SDL_RenderClear(renderer);
+    Pont selected;
     bool quit = false;
     while(!quit) {
-
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             switch(event.type){
@@ -94,7 +91,28 @@ int main(int argc, char *argv[]) {
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-
+                switch(selectedItem){
+                case PEASHOOTER:
+                    if(uj.napocska >= 100){
+                        spawn_peashooter(selected, &uj.novenyek.peashooters_din);
+                        uj.napocska -= 100;
+                    }
+                    break;
+                case WALLNUT:
+                    if(uj.napocska >= 50) {
+                        spawn_wallnut(selected, &uj.novenyek.wallnuts_din);
+                        uj.napocska -= 50;
+                    }
+                    break;
+                case SUNFLOWER:
+                    if(uj.napocska >= 25){
+                        spawn_sunflower(selected, &uj.novenyek.sunflowers_din);
+                        uj.napocska -= 25;
+                    }
+                    break;
+                case NOTHING:
+                    break;
+                }
                 break;
             case SDL_MOUSEBUTTONUP:
 
@@ -103,62 +121,18 @@ int main(int argc, char *argv[]) {
                 break;
 
             }
-            draw_background(renderer, uj.palya, SOR, OSZLOP);
-            (selectedItem == NOTHING) ? printf("?\n"): printf("!\n");
-            /*
-            int mouse_x;
-            int mouse_y;
-
-            if(mouseStates[SDL_BUTTON_LEFT].held) {
-                SDL_Rect pee;
-                if(mouseStates[SDL_BUTTON_LEFT].held){
-                    SDL_GetMouseState(&mouse_x,&mouse_y);
-                    for(int i = 0; i < SOR; ++i) {
-                        for(int j = 0; j < OSZLOP; ++j) {
-                            if(uj.palya[i][j].x < mouse_x && mouse_x < uj.palya[i][j].x+uj.palya[i][j].w){
-                                if(uj.palya[i][j].y < mouse_y && mouse_y < uj.palya[i][j].y+uj.palya[i][j].h){
-                                    pee.x = uj.palya[i][j].x;
-                                    pee.y = uj.palya[i][j].y;
-                                    pee.w = uj.palya[i][j].w;
-                                    pee.h = uj.palya[i][j].h;
-                                }
-
-                            }
-                        }
-                    }
-                SDL_RenderCopy(renderer, peashooter, NULL, &pee);
-                SDL_RenderPresent(renderer);
-                }
-            }
-            */
+            draw_background(renderer,uj.palya, SOR, OSZLOP);
+            draw_peashooters(renderer, uj.palya, &(uj.novenyek.peashooters_din));
+            draw_sunflowers(renderer, uj.palya, &(uj.novenyek.sunflowers_din));
+            draw_wallnuts(renderer, uj.palya, &(uj.novenyek.wallnuts_din));
+            draw_zombies(renderer, uj.palya,&(uj.zombik_din));
+            SDL_Rect current_rect = get_rect(uj.palya, SOR, OSZLOP, &selected);
+            draw_selectedItem(renderer, current_rect ,selectedItem);
+            SDL_RenderPresent(renderer);
         }
-
-        /*
-        float delta_time = (SDL_GetTicks() - last_ticks) / 1000.0f;
-        last_ticks = SDL_GetTicks();
-        */
-
-
-
-
-        /*
-        frameCounter++;
-        fps_timer += delta_time;
-        if(fps_timer >= 1) {
-            char title[100];
-            sprintf(title,"SDL project: %f FPS", frameCounter/ fps_timer);
-            frameCounter = 0;
-            fps_timer = 0;
-            SDL_SetWindowTitle(window, title);
-        }
-        */
     }
 
-
     jatek_felszabadit(&uj);
-
-    SDL_DestroyTexture(peashooter);
-    //SDL_FreeSurface(image);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
