@@ -105,6 +105,6 @@ void spawn_zombie(Pont hova, Zombi_din* zombies_din){
     zombies_din -> meret += 1;
     free(zombies_din -> zombik);
     zombies_din -> zombik = uj;
-    printf("zombie spawned eddigi zombie: %d",zombies_din -> meret);
+    printf("zombie spawned eddigi zombie: %d\n",zombies_din -> meret);
 }
 

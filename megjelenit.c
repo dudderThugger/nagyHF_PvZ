@@ -184,3 +184,20 @@ void draw_selectedItem(SDL_Renderer* renderer, SDL_Rect rect, SelectedItem selec
     SDL_DestroyTexture(wallnut);
     SDL_DestroyTexture(sunflower);
 }
+/**
+ *@brief A lövedékek kirajzolását végző függvény
+ *
+ * A lövedék poziciójának x koordinátája megadja a kör x koordinátáját, az y pedig, hogy melyik sorban legyen
+ *@param renderer A rendererre mutató pointer
+ *@param lovedekek_din A övedékek dinamikus pointere
+ *@param magas
+ */
+void draw_bullets(SDL_Renderer* renderer, Lovedek_din* lovedekek_din, int magas){
+    int x, y;
+    for(int i = 0; i < lovedekek_din->meret; ++i) {
+        x = lovedekek_din->lovedekek[i].pozicio.x;
+        y = (magas/2)+magas * lovedekek_din->lovedekek[i].pozicio.y + 40;
+        filledCircleRGBA(renderer, x, y, 10, 230, 255, 0, 255);
+        circleRGBA(renderer, x, y, 10, 0, 0, 0, 255);
+    }
+}

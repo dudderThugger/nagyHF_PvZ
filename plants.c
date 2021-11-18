@@ -54,7 +54,7 @@ void peashooter_torol(int hanyadik, Peashooter_din* peashooter_din){
           ++ujIndx;
         }
     }
-    peashooter_din -> meret = ujIndx;
+    peashooter_din -> meret -= 1;
     free(peashooter_din -> peashooters);
     peashooter_din -> peashooters = uj;
 }
@@ -73,7 +73,7 @@ void wallnut_torol(int hanyadik, Wallnut_din* wallnut_din){
           ++ujIndx;
         }
     }
-    wallnut_din -> meret = ujIndx;
+    wallnut_din -> meret -=1;
     free(wallnut_din -> wallnuts);
     wallnut_din -> wallnuts = uj;
 }
@@ -92,7 +92,7 @@ void sunflower_torol(int hanyadik, Sunflower_din* sunflower_din){
           ++ujIndx;
         }
     }
-    sunflower_din -> meret = ujIndx;
+    sunflower_din -> meret -=1;
     free(sunflower_din -> sunflowers);
     sunflower_din -> sunflowers = uj;
 }

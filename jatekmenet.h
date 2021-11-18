@@ -172,5 +172,6 @@ typedef struct Jatek {
 
 bool uj_jatek(Jatek* game, double sor, double oszlop, double w, double h);
 void jatek_felszabadit (Jatek* game);
+void jatek_kor(Jatek* game);
 
 #endif // JATEKMENET_H_INCLUDED

@@ -11,6 +11,7 @@
 #include "megjelenit.h"
 #include "plants.h"
 #include "zombie.h"
+#include "bullets.h"
 /**
  *@file main.c
  *
@@ -44,6 +45,14 @@ void sdl_init(char const *felirat, int szeles, int magas, SDL_Window **pwindow, 
     *prenderer = renderer;
 }
 
+Uint32 idozit(Uint32 ms, void *param){
+    param = (void*)param;
+    SDL_Event ev;
+    ev.type = SDL_USEREVENT;
+    SDL_PushEvent(&ev);
+    return ms;
+}
+
 int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
@@ -54,18 +63,25 @@ int main(int argc, char *argv[]) {
     uj.napocska = 1000;
     SelectedItem selectedItem = NOTHING;
 
-    Pont zombie = {.x = 131, .y = 4};
+    Pont zombie = {.x = 600, .y = 4};
+    Pont bullet1 = {.x = 100, .y = 0};
+    Pont bullet2 = {.x = 250, .y = 2};
     spawn_zombie(zombie, &(uj.zombik_din));
+    spawn_lovedek(bullet1,&uj.lovedekek_din);
+    spawn_lovedek(bullet2,&uj.lovedekek_din);
 
-    /* ablak letrehozasa */
+    /** ablak letrehozasa */
     SDL_Window *window;
     SDL_Renderer *renderer;
     sdl_init("Plants vs Zombies nagyon bután", 640, 480, &window, &renderer);
 
+    /** Időzítő hozzáadása*/
+    SDL_TimerID id = SDL_AddTimer(20, idozit, NULL);
 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     SDL_RenderClear(renderer);
     Pont selected;
+    Uint32 timeCounter = 0;
     bool quit = false;
     while(!quit) {
         SDL_Event event;
@@ -114,9 +130,14 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 break;
-            case SDL_MOUSEBUTTONUP:
-
-                break;
+            case SDL_USEREVENT:
+                 if(timeCounter == 50){
+                    timeCounter = 0;
+                    uj.time++;
+                 }
+                 jatek_kor(&uj);
+                 timeCounter++;
+                 break;
             default:
                 break;
 
@@ -126,6 +147,7 @@ int main(int argc, char *argv[]) {
             draw_sunflowers(renderer, uj.palya, &(uj.novenyek.sunflowers_din));
             draw_wallnuts(renderer, uj.palya, &(uj.novenyek.wallnuts_din));
             draw_zombies(renderer, uj.palya,&(uj.zombik_din));
+            draw_bullets(renderer,&uj.lovedekek_din,uj.palya[0][0].h);
             SDL_Rect current_rect = get_rect(uj.palya, SOR, OSZLOP, &selected);
             draw_selectedItem(renderer, current_rect ,selectedItem);
             SDL_RenderPresent(renderer);
@@ -135,6 +157,7 @@ int main(int argc, char *argv[]) {
     jatek_felszabadit(&uj);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_RemoveTimer(id);
     SDL_Quit();
 
     return 0;

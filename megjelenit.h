@@ -32,5 +32,6 @@ void draw_selectedItem(SDL_Renderer* renderer, SDL_Rect rect, SelectedItem selec
 void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_din* wallnuts_din);
 void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_din* sunflower_din);
 void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombi_din* zombies_din);
+void draw_bullets(SDL_Renderer* renderer, Lovedek_din* lovedekek_din, int magas);
 
 #endif // MEGJELENIT_H_INCLUDED

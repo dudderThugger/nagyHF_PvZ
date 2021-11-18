@@ -8,22 +8,22 @@
 
 /**
  *@file jatekmenet.c
- *@brief A játék állásának manipulálásához köthetõ legfontosabb függvényeket tárolja
+ *@brief A jÃ¡tÃ©k Ã¡llÃ¡sÃ¡nak manipulÃ¡lÃ¡sÃ¡hoz kÃ¶thetÃµ legfontosabb fÃ¼ggvÃ©nyeket tÃ¡rolja
  *
- * A játék létrehozását és mentését, a dicsõséglista irányítását, a menü irányítását,
- * a játék által használt dinamikus tömbök felszabadítását végzõ függvények mind itt találhatóak meg
+ * A jÃ¡tÃ©k lÃ©trehozÃ¡sÃ¡t Ã©s mentÃ©sÃ©t, a dicsÃµsÃ©glista irÃ¡nyÃ­tÃ¡sÃ¡t, a menÃ¼ irÃ¡nyÃ­tÃ¡sÃ¡t,
+ * a jÃ¡tÃ©k Ã¡ltal hasznÃ¡lt dinamikus tÃ¶mbÃ¶k felszabadÃ­tÃ¡sÃ¡t vÃ©gzÃµ fÃ¼ggvÃ©nyek mind itt talÃ¡lhatÃ³ak meg
  */
 /**
- *@brief A játék legelején ez a függvény végzi el a játék kezdéséhez szükséges lépéseket
+ *@brief A jÃ¡tÃ©k legelejÃ©n ez a fÃ¼ggvÃ©ny vÃ©gzi el a jÃ¡tÃ©k kezdÃ©sÃ©hez szÃ¼ksÃ©ges lÃ©pÃ©seket
  *
- * Létrehozza a pálya téglalapjait tároló dinamikus tömböt és feltölti a téglalapok adataival
- * Létrehoz pointereket a dinamikus tömbökhöz, hogy késõbb könnyebben kezelhetõ legyen
- * Beállítja a kezdõértékeket (pl. idõ, pont)
- *@param game A játékot tartalmazó struktúra, amit módosítunk
- *@param oszlop Az oszlopok száma (azért valós, hogy az osztásnál elkerüljük az esetleges kerekítéseket)
- *@param sor A sorok száma
- *@param width Az ablak szélessége
- *@param height Az ablak magassága
+ * LÃ©trehozza a pÃ¡lya tÃ©glalapjait tÃ¡rolÃ³ dinamikus tÃ¶mbÃ¶t Ã©s feltÃ¶lti a tÃ©glalapok adataival
+ * LÃ©trehoz pointereket a dinamikus tÃ¶mbÃ¶khÃ¶z, hogy kÃ©sÃµbb kÃ¶nnyebben kezelhetÃµ legyen
+ * BeÃ¡llÃ­tja a kezdÃµÃ©rtÃ©keket (pl. idÃµ, pont)
+ *@param game A jÃ¡tÃ©kot tartalmazÃ³ struktÃºra, amit mÃ³dosÃ­tunk
+ *@param oszlop Az oszlopok szÃ¡ma (azÃ©rt valÃ³s, hogy az osztÃ¡snÃ¡l elkerÃ¼ljÃ¼k az esetleges kerekÃ­tÃ©seket)
+ *@param sor A sorok szÃ¡ma
+ *@param width Az ablak szÃ©lessÃ©ge
+ *@param height Az ablak magassÃ¡ga
  */
 bool uj_jatek (Jatek* game, double oszlop, double sor, double width, double height) {
     bool sikeres = true;
@@ -78,8 +78,8 @@ bool uj_jatek (Jatek* game, double oszlop, double sor, double width, double heig
     return sikeres;
 }
 /**
- *@brief A játék által használt dinamikus tömbök felszabadítása
- *@param game A játékot tároló struktúra
+ *@brief A jÃ¡tÃ©k Ã¡ltal hasznÃ¡lt dinamikus tÃ¶mbÃ¶k felszabadÃ­tÃ¡sa
+ *@param game A jÃ¡tÃ©kot tÃ¡rolÃ³ struktÃºra
  */
 // Felszabaditja a lefoglalt memoriateruletet
 void jatek_felszabadit (Jatek* game) {
@@ -95,11 +95,16 @@ void jatek_felszabadit (Jatek* game) {
 }
 
 /**
- *@brief A játék egy körét elvégzõ függvény
- *@param game A játék struktúrája
+ *@brief A jÃ¡tÃ©k egy kÃ¶rÃ©t elvÃ©gzÃµ fÃ¼ggvÃ©ny
+ * ElÅ‘szÃ¶r elvÃ©gzi a nÃ¶vÃ©nyek akciÃ³jÃ¡t (lÃ¶vÃ©s, napocska termelÃ©s), aztÃ¡n a lÃ¶vedÃ©kek mozgatÃ¡sÃ¡t,
+ * Ã©s legvÃ©gÃ¼l a zombik akciÃ³jÃ¡t (ha beÃ©rnek a zombik leszedjÃ¼k Å‘ket, megÃ¶lik a nÃ¶vÃ©nyeket... stb)
+ *@param game A jÃ¡tÃ©k struktÃºrÃ¡ja
  */
 void jatek_kor(Jatek* game) {
     noveny_akciok(&(game -> novenyek), &(game -> lovedekek_din), &(game -> napocska));
     lovedek_mozog(&(game -> lovedekek_din), &(game-> zombik_din), game -> sor);
     zombi_akciok(&(game -> zombik_din), &(game->novenyek), &(game->elet), game->w, game->oszlop);
+    if(game->time % 5 == 0) {
+        game->napocska += 25;
+    }
 }

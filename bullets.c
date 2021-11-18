@@ -18,12 +18,14 @@
   *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
   */
 void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din){
+    printf("bullet spawned!\n");
     Lovedek* uj = (struct Lovedek*) malloc ((lovedekek_din -> meret+1) * sizeof(struct Lovedek));
-    Lovedek ujLov = {poz};
+    Lovedek ujLov = {.pozicio = poz};
     for(int i = 0; i < lovedekek_din -> meret; ++i) {
         uj[i] = lovedekek_din -> lovedekek[i];
     }
-    uj[lovedekek_din -> meret + 1] = ujLov;
+    uj[lovedekek_din -> meret] = ujLov;
+    lovedekek_din->meret += 1;
     free(lovedekek_din -> lovedekek);
     lovedekek_din -> lovedekek = uj;
 }
@@ -38,10 +40,9 @@ void lovedek_torol(int hanyadik, Lovedek_din* lovedekek_din) {
     for(int i = 0; i < lovedekek_din -> meret; ++i) {
         if(i != hanyadik) {
           uj[ujIndx++] = lovedekek_din -> lovedekek[i];
-          ++ujIndx;
         }
     }
-    lovedekek_din -> meret = ujIndx;
+    lovedekek_din -> meret -= 1;
     free(lovedekek_din -> lovedekek);
     lovedekek_din -> lovedekek = uj;
 }
@@ -73,6 +74,6 @@ void lovedek_mozog(Lovedek_din* lovedekek_din, Zombi_din* zombik_din, int szeles
             }
         }
         // Egyebkent leptetjuk a lovedeket
-        ++lovedekek_din -> lovedekek[i].pozicio.x;
+        lovedekek_din -> lovedekek[i].pozicio.x += 5;
     }
 }
