@@ -7,15 +7,15 @@
 #include "zombie.h"
 /**
  *@file bullets.c
- *@brief A lövedékekhez kapcsolódó függvények definiciója
+ *@brief A lÃ¶vedÃ©kekhez kapcsolÃ³dÃ³ fÃ¼ggvÃ©nyek definiciÃ³ja
  *
- * A lövedékek mozgatásáért, idézéséért és törléséért felelõs függvények
+ * A lÃ¶vedÃ©kek mozgatÃ¡sÃ¡Ã©rt, idÃ©zÃ©sÃ©Ã©rt Ã©s tÃ¶rlÃ©sÃ©Ã©rt felelÅ‘s fÃ¼ggvÃ©nyek
  */
 
  /**
-  *@brief Egy lövedék idézése
-  *@param poz A pont (téglalap helyzete) ahol a lövedék teremtõdni fog
-  *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
+  *@brief Egy lÃ¶vedÃ©k idÃ©zÃ©se
+  *@param poz A pont (tÃ©glalap helyzete) ahol a lÃ¶vedÃ©k teremtÅ‘dni fog
+  *@param lovedekek_din A lÃ¶vedÃ©keket tartalmazÃ³ dinamikus tÃ¶mb
   */
 void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din){
     printf("bullet spawned!\n");
@@ -30,9 +30,9 @@ void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din){
     lovedekek_din -> lovedekek = uj;
 }
  /**
-  *@brief Egy lövedék törlése
-  *@param hanyadik Hanyadik lövedéket kell törölni a dinamikus tömbbõl
-  *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
+  *@brief Egy lÃ¶vedÃ©k tÃ¶rlÃ©se
+  *@param hanyadik Hanyadik lÃ¶vedÃ©ket kell tÃ¶rÃ¶lni a dinamikus tÃ¶mbbÅ‘l
+  *@param lovedekek_din A lÃ¶vedÃ©keket tartalmazÃ³ dinamikus tÃ¶mb
   */
 void lovedek_torol(int hanyadik, Lovedek_din* lovedekek_din) {
     Lovedek* uj = (struct Lovedek*) malloc ((lovedekek_din -> meret-1) * sizeof(struct Lovedek));
@@ -48,32 +48,48 @@ void lovedek_torol(int hanyadik, Lovedek_din* lovedekek_din) {
 }
 
 /**
-  *@brief Az összes lövedék mozgatása
-  *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
-  *@param zombik_din A zombikat tartalmazó dinamikus tömb
-  *@param oszlop A pálya szelessege, ha ezen túl megy törölni kell
+  *@brief Az Ã¶sszes lÃ¶vedÃ©k mozgatÃ¡sa
+  *@param lovedekek_din A lÃ¶vedÃ©keket tartalmazÃ³ dinamikus tÃ¶mb
+  *@param zombik_din A zombikat tartalmazÃ³ dinamikus tÃ¶mb
+  *@param oszlop A pÃ¡lya szelessege, ha ezen tÃºl megy tÃ¶rÃ¶lni kell
   */
 void lovedek_mozog(Lovedek_din* lovedekek_din, Zombi_din* zombik_din, int szeles){
+    int *torlendoId[lovedekek_din->meret];
+    int torlendoDb = 0;
     for(int i = 0; i < lovedekek_din -> meret; ++i){
         Pont aktualis = lovedekek_din -> lovedekek[i].pozicio;
         // Ha kier a lovedek toroljuk
         if(aktualis.x+1 > szeles) {
-            lovedek_torol(i, lovedekek_din);
+            //lovedek_torol(i, lovedekek_din);
+            torlendoId[torlendoDb++] = i;
         }
+
         // Ha zombit talal toroljuk es sebezzuk a zombit
         for(int j = 0; j < zombik_din -> meret; ++j) {
             if(zombik_din -> zombik[j].pozicio.x == aktualis.x) {
                 if(zombik_din -> zombik[j].pozicio.y == aktualis.y){
-                    if(zombik_din -> zombik[j].hp == 1)
-                        zombi_torol(j, zombik_din);
-                    else{
-                        zombik_din -> zombik[j].hp--;
-                    }
-                   lovedek_torol(i,lovedekek_din);
+                    zombik_din -> zombik[j].hp--;
+                   //lovedek_torol(i,lovedekek_din);
+                   torlendoId[torlendoDb++] = i;
                 }
             }
         }
         // Egyebkent leptetjuk a lovedeket
         lovedekek_din -> lovedekek[i].pozicio.x += 15;
     }
+    for(int i = 0; i < torlendoDb; ++i) {
+        lovedek_torol(torlendoId[i], lovedekek_din);
+    }
+    int *torlendoZId[zombik_din->meret];
+    int torlendoZDb = 0;
+    for (int i = 0; i < zombik_din->meret; i++)
+    {
+        if(zombik_din->zombik[i].hp <= 0){
+            torlendoId[torlendoZDb++] = i;
+        }
+    }
+    for (int i = 0; i < torlendoZDb; i++)
+    {
+        zombi_torol(torlendoZId[torlendoZDb], zombik_din);
+    }    
 }

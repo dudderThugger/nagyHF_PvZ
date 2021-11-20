@@ -1,11 +1,11 @@
-﻿#include <SDL.h>
-#include <SDL2_gfxPrimitives.h>
+﻿#include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include "jatekmenet.h"
 #include "debugmalloc.h"
 #include "megjelenit.h"

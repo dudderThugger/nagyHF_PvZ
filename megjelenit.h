@@ -1,22 +1,22 @@
 #ifndef MEGJELENIT_H_INCLUDED
 #define MEGJELENIT_H_INCLUDED
-#include <SDL.h>
-#include <SDL2_gfxPrimitives.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include "jatekmenet.h"
 #include "debugmalloc.h"
 /**
  *@file megjelenit.h
- *@brief Az egész játék megjelenítését végzõ függvények deklarációját tartalmazó fájl
+ *@brief Az egï¿½sz jï¿½tï¿½k megjelenï¿½tï¿½sï¿½t vï¿½gzï¿½ fï¿½ggvï¿½nyek deklarï¿½ciï¿½jï¿½t tartalmazï¿½ fï¿½jl
  */
 
 /**
- *@brief A kijelölhetõ elemeket tartalmazza
+ *@brief A kijelï¿½lhetï¿½ elemeket tartalmazza
  */
 typedef enum SelectedItem {
     PEASHOOTER,
