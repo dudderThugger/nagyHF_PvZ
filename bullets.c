@@ -74,6 +74,6 @@ void lovedek_mozog(Lovedek_din* lovedekek_din, Zombi_din* zombik_din, int szeles
             }
         }
         // Egyebkent leptetjuk a lovedeket
-        lovedekek_din -> lovedekek[i].pozicio.x += 5;
+        lovedekek_din -> lovedekek[i].pozicio.x += 15;
     }
 }

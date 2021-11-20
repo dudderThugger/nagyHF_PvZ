@@ -102,7 +102,7 @@ void jatek_felszabadit (Jatek* game) {
  */
 void jatek_kor(Jatek* game) {
     noveny_akciok(&(game -> novenyek), &(game -> lovedekek_din), &(game -> napocska));
-    lovedek_mozog(&(game -> lovedekek_din), &(game-> zombik_din), game -> sor);
+    lovedek_mozog(&(game -> lovedekek_din), &(game-> zombik_din), game->w);
     zombi_akciok(&(game -> zombik_din), &(game->novenyek), &(game->elet), game->w, game->oszlop);
     if(game->time % 5 == 0) {
         game->napocska += 25;
