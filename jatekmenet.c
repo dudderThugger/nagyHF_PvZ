@@ -52,30 +52,19 @@ bool uj_jatek (Jatek* game, double oszlop, double sor, double width, double heig
     game -> time = 0;
     game -> pont = 0;
     // Letrehozunk egy cimet a dinamikus tomboknek (a kesobbi fuggvenyekben majd az atmeretezesnel felszabaditjuk es ujracsinaljuk)
-    game -> zombik_din.zombik = (struct Zombi*) malloc (sizeof(struct Zombi));
-    if(game -> zombik_din.zombik == NULL)
-        sikeres = false;
-    game -> zombik_din.meret = 0;
-    game -> lovedekek_din.lovedekek = (struct Lovedek*) malloc (sizeof(struct Lovedek));
-    if(game -> lovedekek_din.lovedekek == NULL)
-        sikeres = false;
-    game -> lovedekek_din.meret = 0;
+    game -> zombies_list.first = NULL;
+    game -> zombies_list.meret = 0;
+    game -> lovedekek_list.first = NULL;
+    game -> lovedekek_list.meret = 0;
     game -> time = 0;
     game -> pont = 0;
     game -> napocska = 50;
-    game -> novenyek.peashooters_din.peashooters = (struct Peashooter*) malloc(sizeof(struct Peashooter));
-    if(game -> novenyek.peashooters_din.peashooters  == NULL)
-        sikeres = false;
-    game -> novenyek.peashooters_din.meret = 0;
-    game -> novenyek.wallnuts_din.wallnuts = (struct Wallnut*) malloc(sizeof(struct Wallnut));
-    if(game -> novenyek.wallnuts_din.wallnuts == NULL)
-        sikeres = false;
-    game -> novenyek.wallnuts_din.meret = 0;
-    game -> novenyek.sunflowers_din.sunflowers = (struct Sunflower*) malloc (sizeof(struct Sunflower));
-    if(game -> novenyek.sunflowers_din.sunflowers == NULL)
-        sikeres = false;
-    game -> novenyek.sunflowers_din.meret = 0;
-    return sikeres;
+    game->novenyek.peashooters_list.first = NULL;
+    game->novenyek.peashooters_list.meret = 0;    
+    game->novenyek.wallnuts_list.first = NULL;
+    game->novenyek.wallnuts_list.meret = 0;
+    game->novenyek.sunflowers_list.first = NULL;
+    game->novenyek.sunflowers_list.meret = 0;
 }
 /**
  *@brief A játék által használt dinamikus tömbök felszabadítása
@@ -87,11 +76,42 @@ void jatek_felszabadit (Jatek* game) {
        free(game-> palya[i]);
     }
     free(game->palya);
-    free(game -> zombik_din.zombik);
-    free(game -> lovedekek_din.lovedekek);
-    free(game -> novenyek.peashooters_din.peashooters);
-    free(game -> novenyek.wallnuts_din.wallnuts);
-    free(game -> novenyek.sunflowers_din.sunflowers);
+    if(game->zombies_list.meret != 0){
+        Zombi* iter = game->zombies_list.first;
+        Zombi* next;
+        while(iter->next != NULL){
+            next = iter->next;
+            free(iter);
+            iter = next;
+        }
+    }
+    if(game->novenyek.peashooters_list.meret != 0){
+        Peashooter* iter = game->novenyek.peashooters_list.first;
+        Peashooter* next;
+        while(iter->next != NULL){
+            next = iter->next;
+            free(iter);
+            iter = next;
+        }
+    }
+    if(game->novenyek.sunflowers_list.meret != 0){
+        Sunflower* iter = game->novenyek.sunflowers_list.first;
+        Sunflower* next;
+        while(iter->next != NULL){
+            next = iter->next;
+            free(iter);
+            iter = next;
+        }
+    }
+    if(game->novenyek.wallnuts_list.meret != 0){
+        Wallnut* iter = game->novenyek.wallnuts_list.first;
+        Wallnut* next;
+        while(iter->next != NULL){
+            next = iter->next;
+            free(iter);
+            iter = next;
+        }
+    }
 }
 
 /**
@@ -101,9 +121,9 @@ void jatek_felszabadit (Jatek* game) {
  *@param game A játék struktúrája
  */
 void jatek_kor(Jatek* game) {
-    noveny_akciok(&(game -> novenyek), &(game -> lovedekek_din), &(game -> napocska));
-    lovedek_mozog(&(game -> lovedekek_din), &(game-> zombik_din), game->w);
-    zombi_akciok(&(game -> zombik_din), &(game->novenyek), &(game->elet), game->w, game->oszlop);
+    plant_actions(&game->novenyek, &game->lovedekek_list,game->w,game->sor,&game->napocska);
+    zombie_actions(&game->zombies_list,&game->novenyek,game->palya, &game->elet);
+    lovedek_mozog(&game->lovedekek_list, &game->zombies_list,game->sor);
     if(game->time % 5 == 0) {
         game->napocska += 25;
     }

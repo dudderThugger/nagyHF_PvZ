@@ -5,15 +5,17 @@
 #include <stdlib.h>
 #include "jatekmenet.h"
 #include "debugmalloc.h"
+#include <time.h>
 /**
  *@file zombie.h
- *@brief A zombikhoz tartozó függvények deklarálása
+ *@brief A zombikhoz tartozï¿½ fï¿½ggvï¿½nyek deklarï¿½lï¿½sa
  *
  */
 
-enum{ZOMBIE_MOVE =3 };
+enum{ZOMBIE_MOVE = 3};
 enum{ZOMBIE_HP = 7};
-void zombi_akciok(Zombi_din* zombik_din, Novenyek* novenyek, int* elet, int szeles, int oszlop);
-void zombi_torol(int hanyadik, Zombi_din* zombi_din);
-void spawn_zombie(Pont hova, Zombi_din* zombies_din);
+enum{ZOMBIE_SPAWN_TIME = 5};
+void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life);
+bool van_noveny (Pont p, Novenyek* novenyek, Rects** palya, Peashooter** pea, Wallnut** wall, Sunflower** sun);
+void zombie_spawner (int time, Zombie_list* zombie_list, int width);
 #endif // ZOMBIE_H_INCLUDED

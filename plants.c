@@ -5,137 +5,117 @@
 #include "plants.h"
 #include "bullets.h"
 
-/**
- *@file plants.h
- *@brief A növényekhez kapcsolódó függvények defeiniciója
- *
- * Tartalmazza az összes növény akciójáért felelõs függvényt, a különbözõ növények
- * teremtéséért felelõs függvényeket és a különbözõ növények törlését végzõ függvényeket. *
- */
-
- /**
-  *@brief A növények akcióját végzõ függvény
-  *
-  *A két akcióval rendelkezõ növény akcióját elvégzi, ha azoknak az akció idejük éppen 0-nál van
-  *@param novenyek A növények dinamikus tömbjeit tartalmazó struktúra
-  *@param lovedekek A lövedékeket tartalmazo dinamiku tömb
-  *@param napocska A napocskák számát tároló integer pointere
-  */
-void noveny_akciok(Novenyek* novenyek, Lovedek_din* lovedekek, int* napocska) {
-    for(int i = 0; i < novenyek -> peashooters_din.meret; ++i) {
-        if(novenyek -> peashooters_din.peashooters[i].action_time == 0){
-            spawn_lovedek(novenyek -> peashooters_din.peashooters[i].pozicio, lovedekek);
-            novenyek -> peashooters_din.peashooters[i].action_time = 3;
+void spawn_peashooter(Pont pont, Peashooter_list* peashooter_list){
+    Peashooter* uj = (Peashooter*) malloc (sizeof(Peashooter));
+    uj->prev = NULL;
+    if(peashooter_list->meret = 0){
+        uj->next = NULL;
+    } else {
+        peashooter_list->first->prev = uj;
+        uj->next = peashooter_list->first;
+    }
+    uj->pozicio = pont;
+    peashooter_list->meret += 1;
+    peashooter_list->first = uj;
+}
+void spawn_wallnut(Pont pont, Wallnut_list* wallnut_list){
+    Wallnut* uj = (Wallnut*) malloc (sizeof(Wallnut));
+    uj->prev = NULL;
+    if(wallnut_list->meret = 0){
+        uj->next = NULL;
+    } else {
+        wallnut_list->first->prev = uj;
+        uj->next = wallnut_list->first;
+    }
+    uj->pozicio = pont;
+    wallnut_list->meret += 1;
+    wallnut_list->first = uj;
+}
+void spawn_sunflower(Pont pont, Sunflower_list* sunflower_list){
+    Sunflower* uj = (Sunflower*) malloc (sizeof(Sunflower));
+    uj->prev = NULL;
+    if(sunflower_list->meret = 0){
+        uj->next = NULL;
+    } else {
+        sunflower_list->first->prev = uj;
+        uj->next = sunflower_list->first;
+    }
+    uj->pozicio = pont;
+    sunflower_list->meret += 1;
+    sunflower_list->first = uj;
+}
+void delete_peashooter(Peashooter* del, Peashooter_list* peashooter_list){
+    if(del->prev == NULL)
+        peashooter_list->first = NULL;
+    del->prev->next= del->next;
+    del->next->prev= del->prev;
+    peashooter_list->meret -= 1;
+    free(del);
+}
+void delete_sunflower(Sunflower* del, Sunflower_list* sunflower_list){
+    if(del->prev == NULL)
+        sunflower_list->first = NULL;
+    del->prev->next= del->next;
+    del->next->prev= del->prev;
+    sunflower_list->meret -= 1;
+    free(del);
+}
+void delete_wallnut(Wallnut* del, Wallnut_list* wallnut_list){
+    if(del->prev == NULL)
+        wallnut_list->first = NULL;
+    del->prev->next= del->next;
+    del->next->prev= del->prev;
+    wallnut_list->meret -= 1;
+    free(del);
+}
+void plant_actions(Novenyek* novenyek, Lovedek_list* lovedek_list, int width, int column, int* napocska){
+    Peashooter* iterP = novenyek->peashooters_list.first;
+    Sunflower* iterS = novenyek->sunflowers_list.first;
+    Wallnut* iterW = novenyek->wallnuts_list.first;
+    /** Peashooterek akciÃ³i*/
+    while(iterP != NULL){
+        /** Ã‰l-e mÃ©g a nÃ¶vÃ©ny?*/
+        if(iterP->hp <= 0){
+            Peashooter* next = iterP->next;
+            delete_peashooter(iterP,&novenyek->peashooters_list);
+            iterP = next;
+        }else{
+        /** LÃ¶vÃ©s*/
+            if(iterP->action_time == 0) {
+                Pont p = {.x = (width/column)*iterP->pozicio.x, .y = iterP->pozicio.y};
+                spawn_lovedek(p, lovedek_list);
+                iterP->action_time = PEASHOOTER_ACTION_TIME;
+            } else {
+                iterP->action_time--;
+            }
+            iterP = iterP->next;
+        }
+    }
+    /** Sunflowerek akciÃ³i */
+    while(iterS != NULL){
+        /** Ã‰l-e mÃ©g a nÃ¶vÃ©ny?*/
+        if(iterS->hp <= 0){
+            Sunflower* next = iterS->next;
+            delete_sunflower(iterS,&novenyek->sunflowers_list);
+            iterS = next;
+        }else{
+        /** Napocska adÃ¡s*/
+            if(iterS->action_time == 0) {
+                napocska += 25;
+                iterS->action_time = SUNFLOWER_ACTION_TIME;
+            } else {
+                iterS->action_time -= 1;
+            }
+            iterS = iterS->next;
+        }
+    }
+    while(iterW != NULL){
+        if(iterW->hp <= 0){
+            Wallnut* next = iterW->next;
+            delete_wallnut(iterW,&novenyek->wallnuts_list);
+            iterW = next;
         } else {
-            --novenyek -> peashooters_din.peashooters[i].action_time;
+            iterW = iterW->next;
         }
     }
-    for(int i = 0; i < novenyek -> sunflowers_din.meret; ++i) {
-        if(novenyek -> sunflowers_din.sunflowers[i].action_time == 0){
-            *napocska += 25;
-            novenyek -> sunflowers_din.sunflowers[i].action_time = 10;
-        } else {
-            --novenyek -> sunflowers_din.sunflowers[i].action_time;
-        }
-    }
-}
-
-/**
- *@brief Egy darab peashooter törlését végzõ függvény
- *@param hanyadik Hányadik elemet kell törölni a dinamikus tömbbõl
- *@param peashooter_din A peashootereket tartalmazó dinamikus tömb
- */
-void peashooter_torol(int hanyadik, Peashooter_din* peashooter_din){
-    Peashooter* uj = (struct Peashooter*) malloc ((peashooter_din -> meret-1) * sizeof(struct Peashooter));
-    int ujIndx = 0;
-    for(int i = 0; i < peashooter_din -> meret; ++i) {
-        if(i != hanyadik) {
-          uj[ujIndx++] = peashooter_din -> peashooters[i];
-          ++ujIndx;
-        }
-    }
-    peashooter_din -> meret -= 1;
-    free(peashooter_din -> peashooters);
-    peashooter_din -> peashooters = uj;
-}
-
-/**
- *@brief Egy darab wallnut törlését végzõ függvény
- *@param hanyadik Hányadik elemet kell törölni a dinamikus tömbbõl
- *@param wallnut_din A wallnutokat tartalmazó dinamikus tömb
- */
-void wallnut_torol(int hanyadik, Wallnut_din* wallnut_din){
-    Wallnut* uj = (struct Wallnut*) malloc ((wallnut_din -> meret-1) * sizeof(struct Wallnut));
-    int ujIndx = 0;
-    for(int i = 0; i < wallnut_din -> meret; ++i) {
-        if(i != hanyadik) {
-          uj[ujIndx++] = wallnut_din -> wallnuts[i];
-          ++ujIndx;
-        }
-    }
-    wallnut_din -> meret -=1;
-    free(wallnut_din -> wallnuts);
-    wallnut_din -> wallnuts = uj;
-}
-
-/**
- *@brief Egy darab sunflower törlését végzõ függvény
- *@param hanyadik Hányadik elemet kell törölni a dinamikus tömbbõl
- *@param sunflower_din A sunflowereket tartalmazó dinamikus tömb
- */
-void sunflower_torol(int hanyadik, Sunflower_din* sunflower_din){
-    Sunflower* uj = (Sunflower*) malloc ((sunflower_din -> meret-1) * sizeof(struct Sunflower));
-    int ujIndx = 0;
-    for(int i = 0; i < sunflower_din -> meret; ++i) {
-        if(i != hanyadik) {
-          uj[ujIndx++] = sunflower_din -> sunflowers[i];
-          ++ujIndx;
-        }
-    }
-    sunflower_din -> meret -=1;
-    free(sunflower_din -> sunflowers);
-    sunflower_din -> sunflowers = uj;
-}
-/**
- *@brief Egy peashooter teremtéséért felelõs függvény
- *@param poz Melyik téglalapon van a peashootert
- *@param peashooters A peashooterek dinamikus tömbje
- */
-void spawn_peashooter(Pont poz, Peashooter_din* peashooters) {
-    Peashooter* uj = (Peashooter*) malloc ((peashooters -> meret + 1) * sizeof(Peashooter));
-    for(int i = 0; i < peashooters -> meret; ++i) {
-        uj[i] = peashooters -> peashooters[i];
-    }
-    free(peashooters->peashooters);
-    Peashooter uj_pee = {.hp = 5, .pozicio = poz, .action_time = 3};
-    uj[peashooters ->meret] = uj_pee;
-    peashooters -> meret += 1;
-    peashooters -> peashooters = uj;
-    printf("spawned peashooter x:%d  y:%d  eddigi peashooter: %d\n",uj_pee.pozicio.x, uj_pee.pozicio.y, peashooters->meret);
-}
-
-void spawn_sunflower(Pont poz, Sunflower_din* sunflowers) {
-    Sunflower* uj = (Sunflower*) malloc ((sunflowers -> meret + 1) * sizeof(Sunflower));
-    for(int i = 0; i < sunflowers -> meret; ++i) {
-        uj[i] = sunflowers -> sunflowers[i];
-    }
-    free(sunflowers->sunflowers);
-    Sunflower uj_pee = {.hp = 5, .pozicio = poz, .action_time = 3};
-    uj[sunflowers ->meret] = uj_pee;
-    sunflowers -> meret += 1;
-    sunflowers -> sunflowers = uj;
-    printf("spawned sunflower x:%d  y:%d  eddigi sunflower: %d\n",uj_pee.pozicio.x, uj_pee.pozicio.y, sunflowers->meret);
-}
-
-void spawn_wallnut(Pont poz, Wallnut_din* wallnuts) {
-    Wallnut* uj = (Wallnut*) malloc ((wallnuts -> meret + 1) * sizeof(Wallnut));
-    for(int i = 0; i < wallnuts -> meret; ++i) {
-        uj[i] = wallnuts -> wallnuts[i];
-    }
-    free(wallnuts->wallnuts);
-    Wallnut uj_pee = {.hp = 5, .pozicio = poz};
-    uj[wallnuts ->meret] = uj_pee;
-    wallnuts -> meret += 1;
-    wallnuts -> wallnuts = uj;
-    printf("spawned sunflower x:%d  y:%d  eddigi wallnut: %d\n",uj_pee.pozicio.x, uj_pee.pozicio.y, wallnuts->meret);
 }

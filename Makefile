@@ -1,10 +1,10 @@
 OBJS	= main.o megjelenit.o jatekmenet.o plants.o zombie.o bullets.o
 SOURCE	= main.c megjelenit.c jatekmenet.c plants.c zombie.c bullets.c
-HEADER	= megjelenit.h jatekmenet.h plants.h zombie.h bullets.h
+HEADER	= megjelenit.h jatekmenet.h plants.h zombie.h bullets.h debugmalloc.h
 OUT	= pvz.out
 CC	 = gcc
 FLAGS	 = -g3 -c
-LFLAGS	 = -lSDL2
+LFLAGS	 = -lSDL2 -lSDL2_image -lSDL2_gfx
 
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)

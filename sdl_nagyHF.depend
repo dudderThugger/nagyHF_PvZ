@@ -479,3 +479,37 @@
 	"bullets.h"
 	"zombie.h"
 
+1637411118 source:/home/szelestey/projects/nagyHF_PvZ/plants.c
+	<stdio.h>
+	<stdlib.h>
+	"jatekmenet.h"
+	"debugmalloc.h"
+	"plants.h"
+	"bullets.h"
+
+1637411118 /home/szelestey/projects/nagyHF_PvZ/jatekmenet.h
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	"debugmalloc.h"
+	"jatekmenet.h"
+
+1637321116 /home/szelestey/projects/nagyHF_PvZ/debugmalloc.h
+	<stdbool.h>
+	<stddef.h>
+	<stdlib.h>
+	<stdio.h>
+	<ctype.h>
+	<string.h>
+	<stdarg.h>
+	<process.h>
+	<unistd.h>
+
+1637411118 /home/szelestey/projects/nagyHF_PvZ/plants.h
+	<stdio.h>
+	<stdlib.h>
+	"jatekmenet.h"
+	"debugmalloc.h"
+
+1637411118 /home/szelestey/projects/nagyHF_PvZ/bullets.h
+

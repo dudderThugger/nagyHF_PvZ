@@ -8,14 +8,17 @@
 
 /**
  *@file plants.h
- *@brief A növényekhez kapcsolódó függvények deklarációja
+ *@brief A nï¿½vï¿½nyekhez kapcsolï¿½dï¿½ fï¿½ggvï¿½nyek deklarï¿½ciï¿½ja
  */
-void noveny_akciok(Novenyek* novenyek, Lovedek_din* lovedekek, int* napocska);
-void peashooter_torol(int hanyadik, Peashooter_din* peashooter_din);
-void wallnut_torol(int hanyadik, Wallnut_din* wallnut_din);
-void sunflower_torol(int hanyadik, Sunflower_din* sunflower_din);
-void spawn_peashooter(Pont poz, Peashooter_din* peashooters);
-void spawn_sunflower(Pont poz, Sunflower_din* sunflowers);
-void spawn_wallnut(Pont poz, Wallnut_din* wallnuts);
+enum {PEASHOOTER_ACTION_TIME = 5};
+enum {SUNFLOWER_ACTION_TIME = 5};
+void plant_actions(Novenyek* novenyek, Lovedek_list* lovedek_list, int width, int column, int* napocska);
+void spawn_peashooter(Pont pont, Peashooter_list* peashooter_list);
+void spawn_wallnut(Pont pont, Wallnut_list* wallnut_list);
+void spawn_sunflower(Pont pont, Sunflower_list* sunflower_list);
+void delete_peashooter(Peashooter* del, Peashooter_list* peashooter_list);
+void delete_sunflower(Sunflower* del, Sunflower_list* sunflower_list);
+void delete_wallnut(Wallnut* del, Wallnut_list* wallnut_list);
+void plant_actions(Novenyek* novenyek, Lovedek_list* lovedek_list, int width, int column, int* napocska);
 
 #endif // PLANTS_H_INCLUDED

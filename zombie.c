@@ -6,105 +6,97 @@
 #include "bullets.h"
 #include "zombie.h"
 
-/**
- *@file zombie.c
- *@brief A zombikhoz tartozó függvények
- *
- * A zombik akciójáért, mozgatásukért és idézésükért felelõs függvények találhatóak itt
- */
-
-/**
- *@brief A zombik akcióját irányító függvény
- *
- * Megnézi hogy növénynél, van-e ha igen akkor sebzi a növényt, ha a növénynek elfogy az élette meg is öli, ha nincs növénynél lép
- *
- *@param zombik_din a zombikat tároló dinamikus tömb
- *@param novenyek a növényeket tároló struktúra, ami tartalmazza a dinamikus tömböket
- *@param elet Hány életünk maradt még a játékban
- *@param szeles Milyen széles az ablakunk
- *@param oszlop Hány oszlopos a pályánk
- */
-void zombi_akciok(Zombi_din* zombik_din, Novenyek* novenyek, int* elet, int szeles, int oszlop){
-    for(int i = 0; i <  zombik_din -> meret; ++i) {
-        Zombi aktualis = zombik_din -> zombik[i];
-        // Zombi beer
-        if(aktualis.pozicio.x == 0){
-            zombi_torol(i, zombik_din);
-            (*elet)--;
+bool van_noveny (Pont p, Novenyek* novenyek, Rects** palya, Peashooter** pea, Wallnut** wall, Sunflower** sun){
+    Peashooter* iterP = novenyek->peashooters_list.first;
+    Sunflower* iterS = novenyek->sunflowers_list.first;
+    Wallnut* iterW = novenyek->wallnuts_list.first;
+    bool van = false;
+    while(iterP!=NULL){
+        if(palya[iterP->pozicio.x][iterP->pozicio.y].y == p.y && palya[iterP->pozicio.x][iterP->pozicio.y].y == p.y){
+            *pea = iterP;
+            return true;
         }
-        // Zombi novenynel van
-        for(int j = 0; j < novenyek->peashooters_din.meret; ++i) {
-            Peashooter peashooter = novenyek -> peashooters_din.peashooters[i];
-            if(aktualis.pozicio.y == peashooter.pozicio.y){
-                if(aktualis.pozicio.x == peashooter.pozicio.x*(szeles/oszlop)){
-                    if(peashooter.hp == 1)
-                        peashooter_torol(j, &(novenyek->peashooters_din));
-                    else
-                        --novenyek -> peashooters_din.peashooters[j].hp;
-                }
-            }
-        }
-        for(int j = 0; j < novenyek->wallnuts_din.meret; ++i) {
-            Wallnut wallnut = novenyek -> wallnuts_din.wallnuts[i];
-            if(aktualis.pozicio.y == wallnut.pozicio.y){
-                if(aktualis.pozicio.x == wallnut.pozicio.x){
-                    if(wallnut.hp == 1)
-                        wallnut_torol(j, &(novenyek->wallnuts_din));
-                    else
-                        --novenyek -> wallnuts_din.wallnuts[j].hp;
-                }
-            }
-        }
-        for(int j = 0; j < novenyek->sunflowers_din.meret; ++i) {
-            Sunflower sunflower = novenyek -> sunflowers_din.sunflowers[i];
-            if(aktualis.pozicio.y == sunflower.pozicio.y){
-                if(aktualis.pozicio.x == sunflower.pozicio.x){
-                    if(sunflower.hp == 1)
-                        sunflower_torol(j, &(novenyek->sunflowers_din));
-                    else
-                        --novenyek -> sunflowers_din.sunflowers[j].hp;
-                }
-            }
-        }
-        zombik_din -> zombik[i].pozicio.x -= ZOMBIE_MOVE;
+        iterP = iterP->next;
     }
-}
-/**
- *@brief Egy zombi törléséért felelõs függvény
- *
- *@param hanyadik Hanyadik zombit kell kitörölni a dinamikus tömbbõl
- *@param zombi_din A zombikat tartalmazó dinamikus tömb
- */
-void zombi_torol(int hanyadik, Zombi_din* zombi_din) {
-    Zombi* uj = (struct Zombi*) malloc ((zombi_din -> meret-1) * sizeof(struct Zombi));
-    int ujIndx = 0;
-    for(int i = 0; i < zombi_din -> meret; ++i) {
-        if(i != hanyadik) {
-          uj[ujIndx++] = zombi_din -> zombik[i];
-          ++ujIndx;
+    while(iterS!=NULL){
+        if(palya[iterS->pozicio.x][iterS->pozicio.y].y == p.y && palya[iterS->pozicio.x][iterS->pozicio.y].y == p.y){
+            *sun = iterS;
+            return true;
         }
+        iterS = iterS->next;
     }
-    zombi_din -> meret = ujIndx;
-    free(zombi_din -> zombik);
-    zombi_din -> zombik = uj;
-}
-/**
- *@brief Egy zombi idézéséért felelõs függvény
- *
- *@param hova Hova kell "spawn"-olni a zombit
- *@param zombi_din A zombikat tartalmazó dinamikus tömb
- */
-void spawn_zombie(Pont hova, Zombi_din* zombies_din){
-    Zombi* uj = (struct Zombi*) malloc ((zombies_din -> meret+1) * sizeof(struct Zombi));
-    for(int i = 0; i < zombies_din -> meret; ++i) {
-        uj[i] = zombies_din->zombik[i];
+    while(iterW!=NULL){
+        if(palya[iterW->pozicio.x][iterW->pozicio.y].y == p.y && palya[iterW->pozicio.x][iterW->pozicio.y].y == p.y){
+            *wall = iterW;
+            return true;
+        }
+        iterW = iterW->next;
     }
-    Zombi uj_zomb = {.hp = ZOMBIE_HP,
-                .pozicio = hova};
-    uj[zombies_din->meret] = uj_zomb;
-    zombies_din -> meret += 1;
-    free(zombies_din -> zombik);
-    zombies_din -> zombik = uj;
-    printf("zombie spawned eddigi zombie: %d\n",zombies_din -> meret);
+    return van;
 }
 
+void delete_zombie(Zombi* del, Zombie_list* zombie_list){
+    if(del->prev == NULL)
+        zombie_list->first = NULL;
+    del->prev->next= del->next;
+    del->next->prev= del->prev;
+    zombie_list->meret -= 1;
+    free(del);
+}
+
+void spawn_zombie(Zombie_list* zombie_list, Pont pont){
+    Zombi* uj = (Zombi*) malloc (sizeof(Zombi));
+    uj->prev = NULL;
+    if(zombie_list->meret = 0){
+        uj->next = NULL;
+    } else {
+        zombie_list->first->prev = uj;
+        uj->next = zombie_list->first;
+    }
+    uj->hp = ZOMBIE_HP;
+    uj->pozicio = pont;
+    zombie_list->meret += 1;
+    zombie_list->first = uj;
+    printf("SPaWnsn!\n");
+}
+
+void zombie_spawner (int time, Zombie_list* zombie_list, int width){
+    if(time % ZOMBIE_SPAWN_TIME == 1) {
+        int random = rand()%3;
+        for(int i = 0; i < (time/ZOMBIE_SPAWN_TIME) + 1; ++i){
+            Pont pont = {.x = width, .y = (random+i)%5};
+            spawn_zombie(zombie_list, pont);
+        }
+    }
+}
+void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life) {
+    Zombi* iter = zombie_list->first;
+    bool move = true;
+    while(iter != NULL){
+        /** Ã‰l-e mÃ©g?*/
+        if(iter->hp <= 0){
+            Zombi* del = iter;
+            iter = iter->next;
+            delete_zombie(del, zombie_list);
+        }
+        /** Novenynel van*/
+        Peashooter* p = NULL;
+        Wallnut* w = NULL;
+        Sunflower* s = NULL;
+        if(van_noveny(iter->pozicio, novenyek, palya,&p,&w,&s)){
+            move = false;
+            if(p != NULL)
+                p->hp -= 1;
+            else if(w != NULL)
+                w->hp -= 1;
+            else if(s != NULL)
+                s->hp -= 1;
+            iter = iter->next;
+        }
+        if(move){
+            iter->pozicio.x -= ZOMBIE_MOVE;
+            iter = iter->next;
+        }
+        move = true;
+    }
+}

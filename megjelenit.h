@@ -12,11 +12,11 @@
 #include "debugmalloc.h"
 /**
  *@file megjelenit.h
- *@brief Az eg�sz j�t�k megjelen�t�s�t v�gz� f�ggv�nyek deklar�ci�j�t tartalmaz� f�jl
+ *@brief Az egész játék megjelenítését végz? függvények deklarációi
  */
 
 /**
- *@brief A kijel�lhet� elemeket tartalmazza
+ *@brief A kijelölhet? elemeket tartalmazza
  */
 typedef enum SelectedItem {
     PEASHOOTER,
@@ -26,12 +26,12 @@ typedef enum SelectedItem {
 } SelectedItem;
 
 void draw_background(SDL_Renderer *renderer, Rects** palya, int const sor, int const oszlop);
-void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_din* peashooter_din);
-SDL_Rect get_rect(Rects** palya, int sor, int oszlop, Pont* selected);
+void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list);
+SDL_Rect get_rect(Rects** palya, int sor, int oszlop, int width, int height, Pont* selected);
 void draw_selectedItem(SDL_Renderer* renderer, SDL_Rect rect, SelectedItem selectedItem);
-void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_din* wallnuts_din);
-void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_din* sunflower_din);
-void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombi_din* zombies_din);
-void draw_bullets(SDL_Renderer* renderer, Lovedek_din* lovedekek_din, int magas);
+void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnuts_list);
+void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list);
+void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombie_list* zombie_list);
+void draw_bullets(SDL_Renderer* renderer, Lovedek_list* lovedekek_list, int magas);
 
 #endif // MEGJELENIT_H_INCLUDED

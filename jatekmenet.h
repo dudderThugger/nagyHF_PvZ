@@ -10,164 +10,173 @@
 
 /**
  *@file jatekmenet.h
- *@brief Tartalmazza a játékmenetért felelõs függvények deklarációját és a játékban használt struktúrák zömét
+ *@brief Tartalmazza a jÃ¡tÃ©kmenetÃ©rt felelÃµs fÃ¼ggvÃ©nyek deklarÃ¡ciÃ³jÃ¡t Ã©s a jÃ¡tÃ©kban hasznÃ¡lt struktÃºrÃ¡k zÃ¶mÃ©t
  */
 
 /**
- *@brief Egy négyzet elhelyezkedését tárolja a pályán
+ *@brief Egy nÃ©gyzet elhelyezkedÃ©sÃ©t tÃ¡rolja a pÃ¡lyÃ¡n
  *
  */
 // Egy pont a palyan, ezen lehetnek novenyek, lovedekek, vagy zombik
 typedef struct Pont {
-    /** A négyzet oszlop és sora*/
+    /** A nÃ©gyzet oszlop Ã©s sora*/
     int x, y;
 } Pont;
 
 /**
- *@brief Egy téglalap adatait tároló struktúra
+ *@brief Egy tÃ©glalap adatait tÃ¡rolÃ³ struktÃºra
  */
 typedef struct Rects {
-    /** Egy téglalap x, y koordinátája szélessége és magassága*/
+    /** Egy tÃ©glalap x, y koordinÃ¡tÃ¡ja szÃ©lessÃ©ge Ã©s magassÃ¡ga*/
     int x, y, w, h;
 } Rects;
 
 /**
- *@brief Egy zombi adatait tároló struktúra
+ *@brief Egy zombi adatait tÃ¡rolÃ³ struktÃºra
  */
 typedef struct Zombi {
-    /** A zombi élete*/
+    /** A zombi Ã©lete*/
     int hp;
-    /** A zombi elhelyezkedése a pályán (melyik négyzetbe van)*/
+    /** A zombi elhelyezkedÃ©se a pÃ¡lyÃ¡n (melyik nÃ©gyzetbe van)*/
     Pont pozicio;
+    struct Zombi* next;
+    struct Zombi* prev;
 }Zombi;
-
 /**
- *@brief A zombikat tartalmazó dinamikus tömb
+ *@brief A zombikat tartalmazÃ³ dinamikus tÃ¶mb
  */
-typedef struct Zombi_din {
-    /** A zombik struktúrájának tömbjére mutató pointer*/
-    Zombi* zombik;
-    /** A mérete a tömbnek*/
+typedef struct Zombie_list {
+    /** A zombik struktÃºrÃ¡jÃ¡nak tÃ¶mbjÃ©re mutatÃ³ pointer*/
+    Zombi* first;
+    /** A mÃ©rete a tÃ¶mbnek*/
     int meret;
-} Zombi_din;
+} Zombie_list;
 
 /**
  *@brief Egy lovedek adatai
  */
 typedef struct Lovedek {
-    /**Poziciója a pályán*/
+    /**PoziciÃ³ja a pÃ¡lyÃ¡n*/
     Pont pozicio;
+    struct Lovedek* next;
+    struct Lovedek* prev;
 } Lovedek;
 /**
- *@brief A lövedékek dinamikus tömbje
+ *@brief A lÃ¶vedÃ©kek dinamikus tÃ¶mbje
  */
-typedef struct Lovedek_din {
-    /** A lovedékek tömbjére mutató pointer*/
-    Lovedek* lovedekek;
-    /**A dinamikus tömb mérete*/
+typedef struct Lovedek_list {
+    /** A lovedÃ©kek tÃ¶mbjÃ©re mutatÃ³ pointer*/
+    Lovedek* first;
+    /**A dinamikus tÃ¶mb mÃ©rete*/
     int meret;
-} Lovedek_din;
+} Lovedek_list;
 
 /**
- *@brief Egy peashooter adatait tartalmazó struktúra
+ *@brief Egy peashooter adatait tartalmazÃ³ struktÃºra
  */
 typedef struct Peashooter {
-    /**A peashooter élete*/
+    /**A peashooter Ã©lete*/
     int hp;
-    /**A peashooter lövéséig hátralévõ idõ*/
+    /**A peashooter lÃ¶vÃ©sÃ©ig hÃ¡tralÃ©vÃµ idÃµ*/
     int action_time;
-    /**Poziciója a pályán, hányadik oszlop, hányadik sor*/
+    /**PoziciÃ³ja a pÃ¡lyÃ¡n, hÃ¡nyadik oszlop, hÃ¡nyadik sor*/
     Pont pozicio;
+    struct Peashooter* next;
+    struct Peashooter* prev;
 } Peashooter;
 /**
- *@brief A peashootereket tartalmazó dinamikus tömb struktúrája
+ *@brief A peashootereket tartalmazÃ³ dinamikus tÃ¶mb struktÃºrÃ¡ja
  */
-typedef struct Peashooter_din {
-    /**A peashooterek tömbjére mutató pointer*/
-    Peashooter* peashooters;
-    /**A tömb mérete*/
+typedef struct Peashooter_list {
+    /**A peashooterek tÃ¶mbjÃ©re mutatÃ³ pointer*/
+    Peashooter* first;
+    /**A tÃ¶mb mÃ©rete*/
     int meret;
-} Peashooter_din;
+} Peashooter_list;
 /**
- *@bief Egy dió/krumpli adatait tartalmazó struktúra
+ *@bief Egy diÃ³/krumpli adatait tartalmazÃ³ struktÃºra
  */
 typedef struct Wallnut {
-    /** A krumpli aktuális élete*/
+    /** A krumpli aktuÃ¡lis Ã©lete*/
     int hp;
-    /** A krumpli poziciója, oszlop, sor*/
+    /** A krumpli poziciÃ³ja, oszlop, sor*/
     Pont pozicio;
+    struct Wallnut* next;
+    struct Wallnut* prev;
 } Wallnut;
 /**
- *@brief A krumplikat tartalmazó dinamikus tömb
+ *@brief A krumplikat tartalmazÃ³ dinamikus tÃ¶mb
  */
-typedef struct Wallnut_din {
-    /** A krumplikat tartalmazó tömbre mutató pointer*/
-    Wallnut* wallnuts;
-    /** A tömb mérete*/
+typedef struct Wallnut_list {
+    /** A krumplikat tartalmazÃ³ tÃ¶mbre mutatÃ³ pointer*/
+    Wallnut* first;
+    /** A tÃ¶mb mÃ©rete*/
     int meret;
-} Wallnut_din;
+} Wallnut_list;
 /**
- *@brief Egy napraforgó struktúrája
+ *@brief Egy napraforgÃ³ struktÃºrÃ¡ja
  */
 typedef struct Sunflower {
-    /** A napraforgó aktuális élete*/
+    /** A napraforgÃ³ aktuÃ¡lis Ã©lete*/
     int hp;
-    /** A napraforgó akciójáig mennyi idõ van*/
+    /** A napraforgÃ³ akciÃ³jÃ¡ig mennyi idÃµ van*/
     int action_time;
-    /** A napraforgó poziciója*/
+    /** A napraforgÃ³ poziciÃ³ja*/
     Pont pozicio;
+    struct Sunflower* next;
+    struct Sunflower* prev;
 } Sunflower;
 /**
- *@brief A napraforgókat tartalmazó dinamikus tömb
+ *@brief A napraforgÃ³kat tartalmazÃ³ dinamikus tÃ¶mb
  */
-typedef struct Sunflower_din {
-    /** A napraforgók tömbjére mutató pointer*/
-    Sunflower* sunflowers;
-    /**A tömb mérete*/
+typedef struct Sunflower_list {
+    /** A napraforgÃ³k tÃ¶mbjÃ©re mutatÃ³ pointer*/
+    Sunflower* first;
+    /**A tÃ¶mb mÃ©rete*/
     int meret;
-} Sunflower_din;
+} Sunflower_list;
 /**
- *@brief A különbözõ növények dinamikus tömbjeit tartalmazó struktúra
+ *@brief A kÃ¼lÃ¶nbÃ¶zÃµ nÃ¶vÃ©nyek dinamikus tÃ¶mbjeit tartalmazÃ³ struktÃºra
  */
 typedef struct Novenyek {
-    /** A peashooterek dinamikus tömbje*/
-    Peashooter_din peashooters_din;
-    /** A wallnutok dinamikus tömbje*/
-    Wallnut_din wallnuts_din;
-    /** A sunbflower-ek dinamikus tömbje*/
-    Sunflower_din sunflowers_din;
+    /** A peashooterek dinamikus tÃ¶mbje*/
+    Peashooter_list peashooters_list;
+    /** A wallnutok dinamikus tÃ¶mbje*/
+    Wallnut_list wallnuts_list;
+    /** A sunbflower-ek dinamikus tÃ¶mbje*/
+    Sunflower_list sunflowers_list;
 } Novenyek;
 
 /**
- *@brief Egy játékmenet minden adatát tárolja
+ *@brief Egy jÃ¡tÃ©kmenet minden adatÃ¡t tÃ¡rolja
  *
- * Ezzel az egy struktúrával leírható a játék
+ * Ezzel az egy struktÃºrÃ¡val leÃ­rhatÃ³ a jÃ¡tÃ©k
  */
 typedef struct Jatek {
-    /** A játék téglalapjai, ezen vannak a növények*/
+    /** A jÃ¡tÃ©k tÃ©glalapjai, ezen vannak a nÃ¶vÃ©nyek*/
     Rects** palya;
-    /** A sorok száma*/
+    /** A sorok szÃ¡ma*/
     int sor;
-    /** Az oszlopok száma*/
+    /** Az oszlopok szÃ¡ma*/
     int oszlop;
-    /** Az ablak magassága*/
+    /** Az ablak magassÃ¡ga*/
     int h;
-    /** Az ablak szélessége*/
+    /** Az ablak szÃ©lessÃ©ge*/
     int w;
-    /** Mennyi ideje fut a játék*/
+    /** Mennyi ideje fut a jÃ¡tÃ©k*/
     int time;
     /** Hany eleted maradt*/
     int elet;
-    /** Az aktuális pontszámod*/
+    /** Az aktuÃ¡lis pontszÃ¡mod*/
     int pont;
-    /** Az aktuális napocskáidnak a száma*/
+    /** Az aktuÃ¡lis napocskÃ¡idnak a szÃ¡ma*/
     int napocska;
-    /** A növények dinamikus tömbjeit tároló struktúra*/
+    /** A nÃ¶vÃ©nyek dinamikus tÃ¶mbjeit tÃ¡rolÃ³ struktÃºra*/
     Novenyek novenyek;
-    /** A zombik dinamikus tömbje*/
-    Zombi_din zombik_din;
-    /** A lövedékek dinamikus tömbje*/
-    Lovedek_din lovedekek_din;
+    /** A zombik dinamikus tÃ¶mbje*/
+    Zombie_list zombies_list;
+    /** A lÃ¶vedÃ©kek dinamikus tÃ¶mbje*/
+    Lovedek_list lovedekek_list;
 } Jatek;
 
 bool uj_jatek(Jatek* game, double sor, double oszlop, double w, double h);

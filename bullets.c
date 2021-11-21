@@ -17,34 +17,33 @@
   *@param poz A pont (téglalap helyzete) ahol a lövedék teremtődni fog
   *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
   */
-void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din){
+void spawn_lovedek(Pont poz, Lovedek_list* lovedek_list){
     printf("bullet spawned!\n");
-    Lovedek* uj = (struct Lovedek*) malloc ((lovedekek_din -> meret+1) * sizeof(struct Lovedek));
-    Lovedek ujLov = {.pozicio = poz};
-    for(int i = 0; i < lovedekek_din -> meret; ++i) {
-        uj[i] = lovedekek_din -> lovedekek[i];
+    Lovedek* uj = (struct Lovedek*) malloc (sizeof(struct Lovedek));
+    uj->next = NULL;
+    Lovedek* iter = lovedek_list->first;
+    if(iter == NULL){
+        lovedek_list->first = uj;
+        uj->prev = NULL;
+    } else {
+        while(iter->next != NULL)
+            iter = iter->next;
+        iter->next = uj;
     }
-    uj[lovedekek_din -> meret] = ujLov;
-    lovedekek_din->meret += 1;
-    free(lovedekek_din -> lovedekek);
-    lovedekek_din -> lovedekek = uj;
+    lovedek_list->meret += 1;
 }
  /**
   *@brief Egy lövedék törlése
   *@param hanyadik Hanyadik lövedéket kell törölni a dinamikus tömbből
   *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
   */
-void lovedek_torol(int hanyadik, Lovedek_din* lovedekek_din) {
-    Lovedek* uj = (struct Lovedek*) malloc ((lovedekek_din -> meret-1) * sizeof(struct Lovedek));
-    int ujIndx = 0;
-    for(int i = 0; i < lovedekek_din -> meret; ++i) {
-        if(i != hanyadik) {
-          uj[ujIndx++] = lovedekek_din -> lovedekek[i];
-        }
-    }
-    lovedekek_din -> meret -= 1;
-    free(lovedekek_din -> lovedekek);
-    lovedekek_din -> lovedekek = uj;
+void lovedek_torol(Lovedek* del, Lovedek_list* lovedek_list) {
+    if(del->prev == NULL)
+        lovedek_list->first = NULL;
+    del->prev->next= del->next;
+    del->next->prev= del->prev;
+    lovedek_list->meret -= 1;
+    free(del);
 }
 
 /**
@@ -53,43 +52,32 @@ void lovedek_torol(int hanyadik, Lovedek_din* lovedekek_din) {
   *@param zombik_din A zombikat tartalmazó dinamikus tömb
   *@param oszlop A pálya szelessege, ha ezen túl megy törölni kell
   */
-void lovedek_mozog(Lovedek_din* lovedekek_din, Zombi_din* zombik_din, int szeles){
-    int *torlendoId[lovedekek_din->meret];
-    int torlendoDb = 0;
-    for(int i = 0; i < lovedekek_din -> meret; ++i){
-        Pont aktualis = lovedekek_din -> lovedekek[i].pozicio;
-        // Ha kier a lovedek toroljuk
-        if(aktualis.x+1 > szeles) {
-            //lovedek_torol(i, lovedekek_din);
-            torlendoId[torlendoDb++] = i;
-        }
-
-        // Ha zombit talal toroljuk es sebezzuk a zombit
-        for(int j = 0; j < zombik_din -> meret; ++j) {
-            if(zombik_din -> zombik[j].pozicio.x == aktualis.x) {
-                if(zombik_din -> zombik[j].pozicio.y == aktualis.y){
-                    zombik_din -> zombik[j].hp--;
-                   //lovedek_torol(i,lovedekek_din);
-                   torlendoId[torlendoDb++] = i;
-                }
+void lovedek_mozog(Lovedek_list* lovedekek_list, Zombie_list* zombik_list, int szeles){
+    Lovedek* iterL = lovedekek_list->first;
+    bool mozog= true;
+    while(iterL != NULL){
+        Zombi* iterZ = zombik_list->first;
+        /** A lövedék zombinál van*/
+        while(iterZ != NULL){
+            if(iterZ->pozicio.x - iterL->pozicio.x < 10 && iterL->pozicio.y == iterZ->pozicio.y){
+                Lovedek* next = iterL->next;
+                lovedek_torol(iterL,lovedekek_list);
+                iterZ->hp -= 1;
+                iterL = next;
+                mozog = false;
             }
         }
-        // Egyebkent leptetjuk a lovedeket
-        lovedekek_din -> lovedekek[i].pozicio.x += 15;
-    }
-    for(int i = 0; i < torlendoDb; ++i) {
-        lovedek_torol(torlendoId[i], lovedekek_din);
-    }
-    int *torlendoZId[zombik_din->meret];
-    int torlendoZDb = 0;
-    for (int i = 0; i < zombik_din->meret; i++)
-    {
-        if(zombik_din->zombik[i].hp <= 0){
-            torlendoId[torlendoZDb++] = i;
+        /** A lövedék kiér a pályáról */
+        if(mozog && iterL >= szeles) {
+            Lovedek* next = iterL->next;
+            lovedek_torol(iterL,lovedekek_list);
+            iterL = next;
+            mozog = false;
         }
+        /** A lövedék mozog*/
+        if(mozog){
+            iterL->pozicio.x += BULLET_SPEED;
+        }
+        mozog = true;
     }
-    for (int i = 0; i < torlendoZDb; i++)
-    {
-        zombi_torol(torlendoZId[torlendoZDb], zombik_din);
-    }    
 }

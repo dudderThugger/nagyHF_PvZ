@@ -2,10 +2,10 @@
 #define BULLETS_H_INCLUDED
 /**
  *@file bullets.h
- *@brief Lövedékekhez kapcsolódó függvények deklarációja
+ *@brief Lï¿½vedï¿½kekhez kapcsolï¿½dï¿½ fï¿½ggvï¿½nyek deklarï¿½ciï¿½ja
  */
-void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din);
-void spawn_lovedek(Pont poz, Lovedek_din* lovedekek_din);
-void lovedek_mozog(Lovedek_din* lovedekek_din, Zombi_din* zombik_din, int sor);
+enum {BULLET_SPEED = 10};
+void spawn_lovedek(Pont poz, Lovedek_list* lovedekek_list);
+void lovedek_mozog(Lovedek_list* lovedekek_list, Zombie_list* zombik_list, int sor);
 
 #endif // BULLETS_H_INCLUDED
