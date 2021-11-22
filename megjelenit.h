@@ -26,12 +26,12 @@ typedef enum SelectedItem {
 } SelectedItem;
 
 void draw_background(SDL_Renderer *renderer, Rects** palya, int const sor, int const oszlop);
-void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list);
-SDL_Rect get_rect(Rects** palya, int sor, int oszlop, int width, int height, Pont* selected);
+void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list, SDL_Texture* texture);
+Pont get_rect(Rects** palya, int sor, int oszlop, int width, int height, SDL_Rect* rect);
 void draw_selectedItem(SDL_Renderer* renderer, SDL_Rect rect, SelectedItem selectedItem);
-void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnuts_list);
-void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list);
-void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombie_list* zombie_list);
+void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnuts_list, SDL_Texture* texture);
+void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list, SDL_Texture* texture);
+void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombie_list* zombie_list, SDL_Texture* texture);
 void draw_bullets(SDL_Renderer* renderer, Lovedek_list* lovedekek_list, int magas);
 
 #endif // MEGJELENIT_H_INCLUDED

@@ -28,7 +28,7 @@ void sdl_init(char const *felirat, int szeles, int magas, SDL_Window **pwindow, 
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
     }
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (renderer == NULL) {
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
         exit(1);
@@ -66,7 +66,12 @@ int main(int argc, char *argv[]) {
     sdl_init("Plants vs Zombies nagyon bután", 640, 480, &window, &renderer);
 
     /** Időzítő hozzáadása*/
-    //SDL_TimerID id = SDL_AddTimer(40, idozit, NULL);
+    SDL_TimerID id = SDL_AddTimer(20, idozit, NULL);
+
+    SDL_Texture* textureP = IMG_LoadTexture(renderer, "peashooter.png");
+    SDL_Texture *textureS = IMG_LoadTexture(renderer, "sunflower.png");
+    SDL_Texture *textureW = IMG_LoadTexture(renderer, "wallnut.png");
+    SDL_Texture *textureZ = IMG_LoadTexture(renderer, "zombie.png");
 
     SDL_Rect current_rect;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
@@ -74,7 +79,8 @@ int main(int argc, char *argv[]) {
     Pont selected;
     Uint32 timeCounter = 0;
     bool quit = false;
-    while(!quit) {
+    bool gameOver = false;
+    while(!quit && !gameOver) {
         SDL_Event event;
         while(SDL_PollEvent(&event)) {
             switch(event.type){
@@ -92,29 +98,15 @@ int main(int argc, char *argv[]) {
                 case SDL_SCANCODE_E:
                     selectedItem = SUNFLOWER;
                     break;
-                case SDL_SCANCODE_T:
-                    if(timeCounter == 50){
-                        timeCounter = 0;
-                        uj.time++;
-                        printf("%d\n",uj.time);
-                        if(uj.time % 15 == 1){
-                            printf("spawn\n");
-                            zombie_spawner(uj.time,&uj.zombies_list,uj.w);
-                        }
-                    }
-                    jatek_kor(&uj);
-                    timeCounter++;
-                    break;   
                 default:
                     selectedItem = NOTHING;
-                    
                     break;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 switch(selectedItem){
                 case PEASHOOTER:
-                    if(uj.napocska >= 100){
+                    if(uj.napocska >= 20){
                         spawn_peashooter(selected, &uj.novenyek.peashooters_list);
                         uj.napocska -= 100;
                     }
@@ -135,16 +127,25 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 break;
-            case SDL_USEREVENT:
-                 if(timeCounter == 50){
+            case SDL_USEREVENT:                
+                SDL_RenderClear(renderer);  
+                draw_background(renderer,uj.palya, SOR, OSZLOP);
+                draw_peashooters(renderer, uj.palya, &(uj.novenyek.peashooters_list),textureP);
+                draw_sunflowers(renderer, uj.palya, &(uj.novenyek.sunflowers_list),textureS);
+                draw_wallnuts(renderer, uj.palya, &(uj.novenyek.wallnuts_list),textureW);
+                draw_zombies(renderer, uj.palya,&(uj.zombies_list),textureZ);
+                draw_bullets(renderer,&uj.lovedekek_list,uj.palya[0][0].h);
+                selected = get_rect(uj.palya, uj.sor, uj.oszlop, uj.w, uj.h, &current_rect);
+                draw_selectedItem(renderer, current_rect ,selectedItem);
+                SDL_RenderPresent(renderer);
+                if(timeCounter == 50){
                     timeCounter = 0;
                     uj.time++;
                     printf("%d\n",uj.time);
-                    if(uj.time % 15 == 1){
-                        printf("spawn\n");
-                        zombie_spawner(uj.time,&uj.zombies_list,uj.w);
+                    if(uj.time % 20 == 1){
+                        zombie_spawner(uj.time,&uj.zombies_list,uj.w, uj.sor);
                     }
-                 }
+                }
                  jatek_kor(&uj);
                  timeCounter++;
                  break;
@@ -152,24 +153,20 @@ int main(int argc, char *argv[]) {
                 break;
 
             }
-            SDL_RenderClear(renderer);  
-            draw_background(renderer,uj.palya, SOR, OSZLOP);
-            draw_peashooters(renderer, uj.palya, &(uj.novenyek.peashooters_list));
-            draw_sunflowers(renderer, uj.palya, &(uj.novenyek.sunflowers_list));
-            draw_wallnuts(renderer, uj.palya, &(uj.novenyek.wallnuts_list));
-            draw_zombies(renderer, uj.palya,&(uj.zombies_list));
-            draw_bullets(renderer,&uj.lovedekek_list,uj.palya[0][0].h);
-            current_rect = get_rect(uj.palya, uj.sor, uj.oszlop, uj.w, uj.h, &selected);
-            draw_selectedItem(renderer, current_rect ,selectedItem);
-            SDL_RenderPresent(renderer);
         }
+        if(uj.elet <= 0)
+            gameOver = true;
     }
 
     jatek_felszabadit(&uj);
+    SDL_DestroyTexture(textureS);
+    SDL_DestroyTexture(textureW);
+    SDL_DestroyTexture(textureP);
+    SDL_DestroyTexture(textureZ);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    //SDL_RemoveTimer(id);
+    SDL_RemoveTimer(id);
     SDL_Quit();
 
     return 0;
-    }
+}

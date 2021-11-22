@@ -48,8 +48,6 @@ typedef struct Zombi {
 typedef struct Zombie_list {
     /** A zombik struktúrájának tömbjére mutató pointer*/
     Zombi* first;
-    /** A mérete a tömbnek*/
-    int meret;
 } Zombie_list;
 
 /**
@@ -67,8 +65,6 @@ typedef struct Lovedek {
 typedef struct Lovedek_list {
     /** A lovedékek tömbjére mutató pointer*/
     Lovedek* first;
-    /**A dinamikus tömb mérete*/
-    int meret;
 } Lovedek_list;
 
 /**
@@ -90,8 +86,6 @@ typedef struct Peashooter {
 typedef struct Peashooter_list {
     /**A peashooterek tömbjére mutató pointer*/
     Peashooter* first;
-    /**A tömb mérete*/
-    int meret;
 } Peashooter_list;
 /**
  *@bief Egy dió/krumpli adatait tartalmazó struktúra
@@ -110,8 +104,6 @@ typedef struct Wallnut {
 typedef struct Wallnut_list {
     /** A krumplikat tartalmazó tömbre mutató pointer*/
     Wallnut* first;
-    /** A tömb mérete*/
-    int meret;
 } Wallnut_list;
 /**
  *@brief Egy napraforgó struktúrája
@@ -132,8 +124,6 @@ typedef struct Sunflower {
 typedef struct Sunflower_list {
     /** A napraforgók tömbjére mutató pointer*/
     Sunflower* first;
-    /**A tömb mérete*/
-    int meret;
 } Sunflower_list;
 /**
  *@brief A különbözõ növények dinamikus tömbjeit tartalmazó struktúra
@@ -179,7 +169,7 @@ typedef struct Jatek {
     Lovedek_list lovedekek_list;
 } Jatek;
 
-bool uj_jatek(Jatek* game, double sor, double oszlop, double w, double h);
+bool uj_jatek(Jatek* game, double oslop, double sor, double w, double h);
 void jatek_felszabadit (Jatek* game);
 void jatek_kor(Jatek* game);
 

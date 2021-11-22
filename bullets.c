@@ -18,19 +18,16 @@
   *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
   */
 void spawn_lovedek(Pont poz, Lovedek_list* lovedek_list){
-    printf("bullet spawned!\n");
     Lovedek* uj = (struct Lovedek*) malloc (sizeof(struct Lovedek));
-    uj->next = NULL;
-    Lovedek* iter = lovedek_list->first;
-    if(iter == NULL){
-        lovedek_list->first = uj;
-        uj->prev = NULL;
-    } else {
-        while(iter->next != NULL)
-            iter = iter->next;
-        iter->next = uj;
+    uj->prev = NULL;
+    uj->pozicio = poz;
+    if(lovedek_list->first == NULL){
+        uj->next = NULL;
+    }else{
+        lovedek_list->first->prev = uj;
+        uj->next = lovedek_list->first;
     }
-    lovedek_list->meret += 1;
+    lovedek_list->first = uj;
 }
  /**
   *@brief Egy lövedék törlése
@@ -38,11 +35,22 @@ void spawn_lovedek(Pont poz, Lovedek_list* lovedek_list){
   *@param lovedekek_din A lövedékeket tartalmazó dinamikus tömb
   */
 void lovedek_torol(Lovedek* del, Lovedek_list* lovedek_list) {
-    if(del->prev == NULL)
-        lovedek_list->first = NULL;
-    del->prev->next= del->next;
-    del->next->prev= del->prev;
-    lovedek_list->meret -= 1;
+    if(del->prev == NULL) {
+        if(del->next == NULL){
+            lovedek_list->first = NULL;
+        } else {
+            lovedek_list->first = del->next;
+            del->next->prev = NULL;
+        }
+    }else{
+        if(del->next == NULL){
+            del->prev->next = NULL;
+        }
+        else{
+            del->prev->next = del->next;
+            del->next->prev = del->prev;
+        }
+    }
     free(del);
 }
 
@@ -58,25 +66,28 @@ void lovedek_mozog(Lovedek_list* lovedekek_list, Zombie_list* zombik_list, int s
     while(iterL != NULL){
         Zombi* iterZ = zombik_list->first;
         /** A lövedék zombinál van*/
-        while(iterZ != NULL){
-            if(iterZ->pozicio.x - iterL->pozicio.x < 10 && iterL->pozicio.y == iterZ->pozicio.y){
-                Lovedek* next = iterL->next;
-                lovedek_torol(iterL,lovedekek_list);
+        while(iterZ != NULL && mozog){
+            if(iterZ->pozicio.x - iterL->pozicio.x <= 5 && iterL->pozicio.y == iterZ->pozicio.y){
+                Lovedek* del = iterL;
+                iterL = iterL->next;
+                lovedek_torol(del,lovedekek_list);
                 iterZ->hp -= 1;
-                iterL = next;
                 mozog = false;
             }
+            iterZ = iterZ->next;
         }
         /** A lövedék kiér a pályáról */
-        if(mozog && iterL >= szeles) {
-            Lovedek* next = iterL->next;
-            lovedek_torol(iterL,lovedekek_list);
-            iterL = next;
+        if(mozog && iterL->pozicio.x >= szeles) {
+            Lovedek* del = iterL;
+            iterL = iterL->next;
+            lovedek_torol(del, lovedekek_list);
             mozog = false;
+
         }
         /** A lövedék mozog*/
         if(mozog){
             iterL->pozicio.x += BULLET_SPEED;
+            iterL = iterL->next;
         }
         mozog = true;
     }

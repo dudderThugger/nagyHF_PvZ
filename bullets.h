@@ -2,7 +2,7 @@
 #define BULLETS_H_INCLUDED
 /**
  *@file bullets.h
- *@brief L�ved�kekhez kapcsol�d� f�ggv�nyek deklar�ci�ja
+ *@brief Lï¿½vedï¿½kekhez kapcsolï¿½dï¿½ fï¿½ggvï¿½nyek deklarï¿½ciï¿½ja
  */
 enum {BULLET_SPEED = 10};
 void spawn_lovedek(Pont poz, Lovedek_list* lovedekek_list);

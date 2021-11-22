@@ -12,10 +12,10 @@
  *
  */
 
-enum{ZOMBIE_MOVE = 3};
+enum{ZOMBIE_MOVE = 1};
 enum{ZOMBIE_HP = 7};
-enum{ZOMBIE_SPAWN_TIME = 5};
+enum{ZOMBIE_SPAWN_TIME = 15};
 void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life);
 bool van_noveny (Pont p, Novenyek* novenyek, Rects** palya, Peashooter** pea, Wallnut** wall, Sunflower** sun);
-void zombie_spawner (int time, Zombie_list* zombie_list, int width);
+void zombie_spawner (int time, Zombie_list* zombie_list, int width, int sor);
 #endif // ZOMBIE_H_INCLUDED

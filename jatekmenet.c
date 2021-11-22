@@ -53,18 +53,13 @@ bool uj_jatek (Jatek* game, double oszlop, double sor, double width, double heig
     game -> pont = 0;
     // Letrehozunk egy cimet a dinamikus tomboknek (a kesobbi fuggvenyekben majd az atmeretezesnel felszabaditjuk es ujracsinaljuk)
     game -> zombies_list.first = NULL;
-    game -> zombies_list.meret = 0;
     game -> lovedekek_list.first = NULL;
-    game -> lovedekek_list.meret = 0;
     game -> time = 0;
     game -> pont = 0;
     game -> napocska = 50;
-    game->novenyek.peashooters_list.first = NULL;
-    game->novenyek.peashooters_list.meret = 0;    
+    game->novenyek.peashooters_list.first = NULL;    
     game->novenyek.wallnuts_list.first = NULL;
-    game->novenyek.wallnuts_list.meret = 0;
     game->novenyek.sunflowers_list.first = NULL;
-    game->novenyek.sunflowers_list.meret = 0;
 }
 /**
  *@brief A játék által használt dinamikus tömbök felszabadítása
@@ -76,41 +71,40 @@ void jatek_felszabadit (Jatek* game) {
        free(game-> palya[i]);
     }
     free(game->palya);
-    if(game->zombies_list.meret != 0){
-        Zombi* iter = game->zombies_list.first;
-        Zombi* next;
-        while(iter->next != NULL){
-            next = iter->next;
-            free(iter);
-            iter = next;
-        }
+    Zombi* iterZ = game->zombies_list.first;
+    Zombi* nextZ;
+    while(iterZ != NULL){
+        nextZ = iterZ->next;
+        free(iterZ);
+        iterZ = nextZ;
     }
-    if(game->novenyek.peashooters_list.meret != 0){
-        Peashooter* iter = game->novenyek.peashooters_list.first;
-        Peashooter* next;
-        while(iter->next != NULL){
-            next = iter->next;
-            free(iter);
-            iter = next;
-        }
+    Peashooter* iterP = game->novenyek.peashooters_list.first;
+    Peashooter* nextP;
+    while(iterP != NULL){
+        nextP = iterP->next;
+        free(iterP);
+        iterP = nextP;
     }
-    if(game->novenyek.sunflowers_list.meret != 0){
-        Sunflower* iter = game->novenyek.sunflowers_list.first;
-        Sunflower* next;
-        while(iter->next != NULL){
-            next = iter->next;
-            free(iter);
-            iter = next;
-        }
+    Sunflower* iterS = game->novenyek.sunflowers_list.first;
+    Sunflower* nextS;
+    while(iterS != NULL){
+        nextS = iterS->next;
+        free(iterS);
+        iterS = nextS;
     }
-    if(game->novenyek.wallnuts_list.meret != 0){
-        Wallnut* iter = game->novenyek.wallnuts_list.first;
-        Wallnut* next;
-        while(iter->next != NULL){
-            next = iter->next;
-            free(iter);
-            iter = next;
-        }
+    Wallnut* iterW = game->novenyek.wallnuts_list.first;
+    Wallnut* nextW;
+    while(iterW != NULL){
+        nextW = iterW->next;
+        free(iterW);
+        iterW = nextW;
+    }
+    Lovedek* iterL = game->lovedekek_list.first;
+    Lovedek* nextL;
+    while(iterL != NULL) {
+        nextL = iterL->next;
+        free(iterL);
+        iterL = nextL;
     }
 }
 
@@ -121,9 +115,9 @@ void jatek_felszabadit (Jatek* game) {
  *@param game A játék struktúrája
  */
 void jatek_kor(Jatek* game) {
-    plant_actions(&game->novenyek, &game->lovedekek_list,game->w,game->sor,&game->napocska);
+    plant_actions(&game->novenyek, &game->lovedekek_list,&game->zombies_list,game->w,game->oszlop,&game->napocska);
     zombie_actions(&game->zombies_list,&game->novenyek,game->palya, &game->elet);
-    lovedek_mozog(&game->lovedekek_list, &game->zombies_list,game->sor);
+    lovedek_mozog(&game->lovedekek_list, &game->zombies_list,game->w);
     if(game->time % 5 == 0) {
         game->napocska += 25;
     }

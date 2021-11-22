@@ -10,44 +10,54 @@ bool van_noveny (Pont p, Novenyek* novenyek, Rects** palya, Peashooter** pea, Wa
     Peashooter* iterP = novenyek->peashooters_list.first;
     Sunflower* iterS = novenyek->sunflowers_list.first;
     Wallnut* iterW = novenyek->wallnuts_list.first;
-    bool van = false;
     while(iterP!=NULL){
-        if(palya[iterP->pozicio.x][iterP->pozicio.y].y == p.y && palya[iterP->pozicio.x][iterP->pozicio.y].y == p.y){
+        if(iterP->pozicio.y == p.y && (p.x - palya[iterP->pozicio.y][iterP->pozicio.x].x) <= 15){
             *pea = iterP;
             return true;
         }
         iterP = iterP->next;
     }
     while(iterS!=NULL){
-        if(palya[iterS->pozicio.x][iterS->pozicio.y].y == p.y && palya[iterS->pozicio.x][iterS->pozicio.y].y == p.y){
+        if(iterS->pozicio.y == p.y && (p.x - palya[iterS->pozicio.y][iterS->pozicio.x].x) <= 15){
             *sun = iterS;
             return true;
         }
         iterS = iterS->next;
     }
     while(iterW!=NULL){
-        if(palya[iterW->pozicio.x][iterW->pozicio.y].y == p.y && palya[iterW->pozicio.x][iterW->pozicio.y].y == p.y){
+        if(iterW->pozicio.y == p.y && (p.x - palya[iterW->pozicio.y][iterW->pozicio.x].x) <= 15){
             *wall = iterW;
             return true;
         }
         iterW = iterW->next;
     }
-    return van;
+    return false;
 }
 
 void delete_zombie(Zombi* del, Zombie_list* zombie_list){
-    if(del->prev == NULL)
-        zombie_list->first = NULL;
-    del->prev->next= del->next;
-    del->next->prev= del->prev;
-    zombie_list->meret -= 1;
+    if(del->prev == NULL) {
+        if(del->next == NULL){
+            zombie_list->first = NULL;
+        } else {
+            zombie_list->first = del->next;
+            del->next->prev = NULL;
+        }
+    }else{
+        if(del->next == NULL){
+            del->prev->next = NULL;
+        }
+        else{
+            del->prev->next = del->next;
+            del->next->prev = del->prev;
+        }
+    }
     free(del);
 }
 
 void spawn_zombie(Zombie_list* zombie_list, Pont pont){
     Zombi* uj = (Zombi*) malloc (sizeof(Zombi));
     uj->prev = NULL;
-    if(zombie_list->meret = 0){
+    if(zombie_list->first == NULL){
         uj->next = NULL;
     } else {
         zombie_list->first->prev = uj;
@@ -55,18 +65,14 @@ void spawn_zombie(Zombie_list* zombie_list, Pont pont){
     }
     uj->hp = ZOMBIE_HP;
     uj->pozicio = pont;
-    zombie_list->meret += 1;
     zombie_list->first = uj;
-    printf("SPaWnsn!\n");
 }
 
-void zombie_spawner (int time, Zombie_list* zombie_list, int width){
-    if(time % ZOMBIE_SPAWN_TIME == 1) {
-        int random = rand()%3;
-        for(int i = 0; i < (time/ZOMBIE_SPAWN_TIME) + 1; ++i){
-            Pont pont = {.x = width, .y = (random+i)%5};
-            spawn_zombie(zombie_list, pont);
-        }
+void zombie_spawner (int time, Zombie_list* zombie_list, int width,int sor){
+    int random = rand()%3;
+    for(int i = 0; i < (time/ZOMBIE_SPAWN_TIME) + 1; ++i){
+        Pont pont = {.x = width, .y = (random+i)%sor};
+        spawn_zombie(zombie_list, pont);
     }
 }
 void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life) {
@@ -78,12 +84,13 @@ void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya,
             Zombi* del = iter;
             iter = iter->next;
             delete_zombie(del, zombie_list);
+            move = false;
         }
         /** Novenynel van*/
         Peashooter* p = NULL;
         Wallnut* w = NULL;
         Sunflower* s = NULL;
-        if(van_noveny(iter->pozicio, novenyek, palya,&p,&w,&s)){
+        if(move && van_noveny(iter->pozicio, novenyek, palya,&p,&w,&s)){
             move = false;
             if(p != NULL)
                 p->hp -= 1;
@@ -92,6 +99,13 @@ void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya,
             else if(s != NULL)
                 s->hp -= 1;
             iter = iter->next;
+        }
+        /** Eleri a szelet*/
+        if(move && iter->pozicio.x < 0) {
+            Zombi* del = iter;
+            iter = iter->next;
+            delete_zombie(del, zombie_list);
+            move = false;
         }
         if(move){
             iter->pozicio.x -= ZOMBIE_MOVE;

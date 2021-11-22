@@ -46,17 +46,16 @@ void draw_background(SDL_Renderer *renderer, Rects** palya, int sor, int oszlop)
  *@param palya A palya téglalapjaira mutató, pointerek tömbje, amiből az adatokat szedjük a képek beillesztéséhez
  *@param peashooter_din a peashooterek dinamikus tömbje
  */
-void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list){
-    SDL_Texture *texture = IMG_LoadTexture(renderer, "peashooter.png");
+void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list, SDL_Texture* texture){
     Peashooter* iter = peashooter_list->first;
     while(iter != NULL) {
-        SDL_Rect rect= {.x = palya[iter->pozicio.x][iter->pozicio.y].x,
-                    .y = palya[iter->pozicio.x][iter->pozicio.y].y,
-                    .h = palya[iter->pozicio.x][iter->pozicio.y].h,
-                    .w = palya[iter->pozicio.x][iter->pozicio.y].w};
+        SDL_Rect rect= {.x = palya[iter->pozicio.y][iter->pozicio.x].x,
+                        .y = palya[iter->pozicio.y][iter->pozicio.x].y,
+                        .h = palya[iter->pozicio.y][iter->pozicio.x].h,
+                        .w = palya[iter->pozicio.y][iter->pozicio.x].w};
         SDL_RenderCopy(renderer,texture,NULL,&rect);
+        iter = iter->next;
     }
-    SDL_DestroyTexture(texture);
 }
 /**
  *@brief Az összes sunflower kirajzolását végző függvény
@@ -65,17 +64,16 @@ void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* p
  *@param palya A palya téglalapjaira mutató, pointerek tömbje, amiből az adatokat szedjük a képek beillesztéséhez
  *@param sunflower_din a sunflowerek dinamikus tömbje
  */
-void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list){
-    SDL_Texture *texture = IMG_LoadTexture(renderer, "sunflower.png");
+void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list, SDL_Texture* texture){
     Sunflower* iter = sunflower_list->first;
     while(iter != NULL) {
-        SDL_Rect rect= {.x = palya[iter->pozicio.x][iter->pozicio.y].x,
-                    .y = palya[iter->pozicio.x][iter->pozicio.y].y,
-                    .h = palya[iter->pozicio.x][iter->pozicio.y].h,
-                    .w = palya[iter->pozicio.x][iter->pozicio.y].w};
+        SDL_Rect rect= {.x = palya[iter->pozicio.y][iter->pozicio.x].x,
+                    .y = palya[iter->pozicio.y][iter->pozicio.y].y,
+                    .h = palya[iter->pozicio.y][iter->pozicio.y].h,
+                    .w = palya[iter->pozicio.y][iter->pozicio.y].w};
         SDL_RenderCopy(renderer,texture,NULL,&rect);
+        iter = iter -> next;
     }
-    SDL_DestroyTexture(texture);
 }
 /**
  *@brief Az összes wallnut kirajzolását végző függvény
@@ -84,17 +82,16 @@ void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sun
  *@param palya A palya téglalapjaira mutató, pointerek tömbje, amiből az adatokat szedjük a képek beillesztéséhez
  *@param wallnut_din a wallnutok dinamikus tömbje
  */
-void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnut_list){
-    SDL_Texture *texture = IMG_LoadTexture(renderer, "wallnut.png");
+void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnut_list, SDL_Texture* texture){
     Wallnut* iter = wallnut_list->first;
     while(iter != NULL) {
-        SDL_Rect rect= {.x = palya[iter->pozicio.x][iter->pozicio.y].x,
-                    .y = palya[iter->pozicio.x][iter->pozicio.y].y,
-                    .h = palya[iter->pozicio.x][iter->pozicio.y].h,
-                    .w = palya[iter->pozicio.x][iter->pozicio.y].w};
+        SDL_Rect rect= {.x = palya[iter->pozicio.y][iter->pozicio.x].x,
+                    .y = palya[iter->pozicio.y][iter->pozicio.x].y,
+                    .h = palya[iter->pozicio.y][iter->pozicio.x].h,
+                    .w = palya[iter->pozicio.y][iter->pozicio.x].w};
         SDL_RenderCopy(renderer,texture,NULL,&rect);
+        iter = iter->next;
     }
-    SDL_DestroyTexture(texture);
 }
 /**
  *@brief Az összes zombi kirajzolását végző függvény
@@ -103,17 +100,16 @@ void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnut
  *@param palya A palya téglalapjaira mutató, pointerek tömbje, amiből az adatokat szedjük a képek beillesztéséhez
  *@param zombies_din A zombik dinamikus tömbje
  */
-void draw_zombies(SDL_Renderer * renderer, Rects** palya, Zombie_list* zombie_list){
-    SDL_Texture *texture = IMG_LoadTexture(renderer, "zombie.png");
+void draw_zombies(SDL_Renderer * renderer, Rects** palya, Zombie_list* zombie_list, SDL_Texture* texture){
     Zombi* iter = zombie_list->first;
     while(iter != NULL) {
-        SDL_Rect rect= {.x = iter->pozicio.x,
-                        .y = palya[iter->pozicio.x][iter->pozicio.y].y,
+        SDL_Rect rect = {.x = iter->pozicio.x,
+                        .y = palya[iter->pozicio.y][iter->pozicio.y].y,
                         .h = palya[0][iter->pozicio.y].h,
                         .w = palya[0][iter->pozicio.y].w};
         SDL_RenderCopy(renderer,texture,NULL,&rect);
+        iter = iter->next;
     }
-    SDL_DestroyTexture(texture);
 }
 /**
  *@brief A téglalap meghatározását végző függvény, amire az egér mutat
@@ -124,15 +120,17 @@ void draw_zombies(SDL_Renderer * renderer, Rects** palya, Zombie_list* zombie_li
  *@param oszlop Az oszlopok száma
  *@param selected A kiválasztott téglalap koordinátáit ebbe a pointerbe írjuk, így máshol is fel tudjuk használni
  */
-SDL_Rect get_rect(Rects** palya, int sor, int oszlop, int width, int height, Pont* selected) {
-    SDL_Rect rect;
+Pont get_rect(Rects** palya, int sor, int oszlop, int width, int height, SDL_Rect* rect) {
     int mouse_x, mouse_y;
+    Pont selected;
     SDL_GetMouseState(&mouse_x,&mouse_y);
-    rect.h = palya[mouse_x/(width/oszlop)][(mouse_y-60)/(height/sor)].h;
-    rect.y = palya[mouse_x/(width/oszlop)][(mouse_y-60)/(height/sor)].y;
-    rect.x = palya[mouse_x/(width/oszlop)][(mouse_y-60)/(height/sor)].x;
-    rect.w = palya[mouse_x/(width/oszlop)][(mouse_y-60)/(height/sor)].w;
-    return rect;
+    rect->h = palya[(mouse_y-60)/(height/sor)][mouse_x/(width/oszlop)].h;
+    rect->y = palya[(mouse_y-60)/(height/sor)][mouse_x/(width/oszlop)].y;
+    rect->x = palya[(mouse_y-60)/(height/sor)][mouse_x/(width/oszlop)].x;
+    rect->w = palya[(mouse_y-60)/(height/sor)][mouse_x/(width/oszlop)].w;
+    selected.y = (mouse_y-60)/(height/sor);
+    selected.x = mouse_x/(width/oszlop);
+    return selected;
 }
 /**
  *@brief Az éppen kiválasztott "item" megjelenítését végző függvény
@@ -178,7 +176,7 @@ void draw_bullets(SDL_Renderer* renderer, Lovedek_list* lovedekek_list, int maga
     Lovedek* iter = lovedekek_list->first;
     while(iter != NULL) {
         x = iter->pozicio.x;
-        y = (magas/2)+magas * iter->pozicio.y + 40;
+        y = (magas/2)+magas * (iter->pozicio.y) + 40;
         filledCircleRGBA(renderer, x, y, 10, 230, 255, 0, 255);
         circleRGBA(renderer, x, y, 10, 0, 0, 0, 255);
         iter = iter->next;
