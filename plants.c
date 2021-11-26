@@ -139,13 +139,15 @@ void plant_actions(Novenyek* novenyek, Lovedek_list* lovedek_list,Zombie_list* z
             delete_sunflower(del,&novenyek->sunflowers_list);
         }else{
         /** Napocska adás*/
-            if(iterS->action_time == 0) {
-                napocska += 25;
-                iterS->action_time = SUNFLOWER_ACTION_TIME;
-            } else {
-                iterS->action_time -= 1;
+            if(*napocska < 9975){
+                if(iterS->action_time == 0) {
+                    *napocska += 25;
+                    iterS->action_time = SUNFLOWER_ACTION_TIME;
+                } else {
+                    iterS->action_time -= 1;
+                }
+                iterS = iterS->next;
             }
-            iterS = iterS->next;
         }
     }
     while(iterW != NULL){

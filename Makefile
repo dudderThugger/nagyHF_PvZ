@@ -4,7 +4,7 @@ HEADER	= megjelenit.h jatekmenet.h plants.h zombie.h bullets.h debugmalloc.h
 OUT	= pvz.out
 CC	 = gcc
 FLAGS	 = -g3 -c
-LFLAGS	 = -lSDL2 -lSDL2_image -lSDL2_gfx
+LFLAGS	 = -lSDL2 -lSDL2_image -lSDL2_gfx -lSDL2_ttf
 
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)

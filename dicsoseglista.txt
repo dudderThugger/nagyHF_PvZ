@@ -1,0 +1,10 @@
+Y	000231
+X	000112
+Z	000111
+Anonymus	000079
+dddeee	000061
+George	000054
+s	000050
+Brad_Pitt	000042
+Terence	000035
+Fred	000032

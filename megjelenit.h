@@ -10,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include "jatekmenet.h"
 #include "debugmalloc.h"
+#include <SDL2/SDL_ttf.h>
 /**
  *@file megjelenit.h
  *@brief Az egész játék megjelenítését végz? függvények deklarációi
@@ -25,6 +26,7 @@ typedef enum SelectedItem {
     NOTHING
 } SelectedItem;
 
+void draw_HUD(SDL_Renderer* renderer, TTF_Font* font, int life, int score, int time, int width, int napocska);
 void draw_background(SDL_Renderer *renderer, Rects** palya, int const sor, int const oszlop);
 void draw_peashooters(SDL_Renderer * renderer, Rects** palya, Peashooter_list* peashooter_list, SDL_Texture* texture);
 Pont get_rect(Rects** palya, int sor, int oszlop, int width, int height, SDL_Rect* rect);
@@ -33,5 +35,6 @@ void draw_wallnuts(SDL_Renderer * renderer, Rects** palya, Wallnut_list* wallnut
 void draw_sunflowers(SDL_Renderer * renderer, Rects** palya, Sunflower_list* sunflower_list, SDL_Texture* texture);
 void draw_zombies(SDL_Renderer* renderer, Rects** palya, Zombie_list* zombie_list, SDL_Texture* texture);
 void draw_bullets(SDL_Renderer* renderer, Lovedek_list* lovedekek_list, int magas);
+void draw_gameOver(SDL_Renderer* renderer, TTF_Font* font,int height, int width);
 
 #endif // MEGJELENIT_H_INCLUDED

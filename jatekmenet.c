@@ -56,7 +56,8 @@ bool uj_jatek (Jatek* game, double oszlop, double sor, double width, double heig
     game -> lovedekek_list.first = NULL;
     game -> time = 0;
     game -> pont = 0;
-    game -> napocska = 50;
+    game -> napocska = 150;
+    game->elet = 5;
     game->novenyek.peashooters_list.first = NULL;    
     game->novenyek.wallnuts_list.first = NULL;
     game->novenyek.sunflowers_list.first = NULL;
@@ -97,7 +98,7 @@ void jatek_felszabadit (Jatek* game) {
     while(iterW != NULL){
         nextW = iterW->next;
         free(iterW);
-        iterW = nextW;
+        iterW = nextW; 
     }
     Lovedek* iterL = game->lovedekek_list.first;
     Lovedek* nextL;
@@ -105,6 +106,82 @@ void jatek_felszabadit (Jatek* game) {
         nextL = iterL->next;
         free(iterL);
         iterL = nextL;
+    }
+}
+
+void print_control(){
+    printf("\nA novenyek az eloholtak ellen iranyitasa nagyon egyszeru! \n\n \"Q\": Borsolovo kivalasztasa\n \"W\": A dio kivalasztasa\n \"E\": A napraforgo kivalasztasa\n"
+    "A noveny kivalasztasa utan kattintassal tudja lerakni oket a palya egyik teglalapjara\n\nEs ennyi a szabaly!\n\n");
+}
+
+void print_dicsosegLista(){
+    FILE* f = fopen("dicsoseglista.txt","r");
+    int pont;
+    char nev[50];
+    int hanyadik = 1;
+    while(hanyadik < 11 && fscanf(f,"%s %d\n",nev,&pont) > 0)
+        printf("%d. %s %06d\n",hanyadik++,nev,pont);
+    printf("\n");
+    fclose(f);
+}
+
+void game_over(int pont, char* nev){
+    int* score = (int*) malloc (10*sizeof(int));
+    char** names = (char**) malloc(10*sizeof(char*));
+    for(int i = 0; i < 10; ++i){
+        names[i] = (char*) malloc(50*sizeof(char));
+    }
+    FILE* fp = fopen("dicsoseglista.txt","r");
+    int db = 0;
+    int hova = 0;
+    while(db < 10 && fscanf(fp,"%s %d\n",names[db],&score[db]) > 0){
+        if(score[db] > pont){
+            hova = db;
+        }
+        db++;
+    }
+    fp = freopen("dicsoseglista.txt","w",fp);
+    int j = 0;
+    for(int i = 0; i < db && j < 10; ++i, ++j){
+        fprintf(fp,"%s\t%06d\n", names[i],score[i]);
+        if(i == hova && j != 9){
+            fprintf(fp,"%s\t%06d\n", nev,pont);
+            j++;
+        }
+    }
+    fclose(fp);
+    for(int i = 0; i < 10; ++i){
+        free(names[i]);
+    }
+    free(names);
+    free(score);
+}
+
+void game_start(char* nev){
+    int valasz;
+    bool menu = true;
+    while(menu){
+        printf("Novenyek az elohalottak ellen!\n[1] Uj jatek\n[2] Iranyitas\n[3] Dicsoseglista\n[4] Kilépés!\n");
+        scanf("%d",&valasz);
+        switch(valasz){
+            case 1:
+                printf("A jatek elott adja meg a nevet:\t");
+                scanf("%s",nev);
+                menu = false;
+                break;
+            case 2:
+                print_control();
+                break;
+            case 3:
+                print_dicsosegLista();
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Tudod kivel szorakozzal!\n");
+                menu = false;
+                break;
+        }
     }
 }
 
@@ -116,9 +193,6 @@ void jatek_felszabadit (Jatek* game) {
  */
 void jatek_kor(Jatek* game) {
     plant_actions(&game->novenyek, &game->lovedekek_list,&game->zombies_list,game->w,game->oszlop,&game->napocska);
-    zombie_actions(&game->zombies_list,&game->novenyek,game->palya, &game->elet);
+    zombie_actions(&game->zombies_list,&game->novenyek,game->palya, &game->elet,&(game->pont));
     lovedek_mozog(&game->lovedekek_list, &game->zombies_list,game->w);
-    if(game->time % 5 == 0) {
-        game->napocska += 25;
-    }
 }

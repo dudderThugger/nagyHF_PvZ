@@ -11,21 +11,21 @@ bool van_noveny (Pont p, Novenyek* novenyek, Rects** palya, Peashooter** pea, Wa
     Sunflower* iterS = novenyek->sunflowers_list.first;
     Wallnut* iterW = novenyek->wallnuts_list.first;
     while(iterP!=NULL){
-        if(iterP->pozicio.y == p.y && (p.x - palya[iterP->pozicio.y][iterP->pozicio.x].x) <= 15){
+        if(iterP->pozicio.y == p.y && fabs(p.x - palya[iterP->pozicio.y][iterP->pozicio.x].x) <= 15){
             *pea = iterP;
             return true;
         }
         iterP = iterP->next;
     }
     while(iterS!=NULL){
-        if(iterS->pozicio.y == p.y && (p.x - palya[iterS->pozicio.y][iterS->pozicio.x].x) <= 15){
+        if(iterS->pozicio.y == p.y && fabs(p.x - palya[iterS->pozicio.y][iterS->pozicio.x].x) <= 15){
             *sun = iterS;
             return true;
         }
         iterS = iterS->next;
     }
     while(iterW!=NULL){
-        if(iterW->pozicio.y == p.y && (p.x - palya[iterW->pozicio.y][iterW->pozicio.x].x) <= 15){
+        if(iterW->pozicio.y == p.y && fabs(p.x - palya[iterW->pozicio.y][iterW->pozicio.x].x) <= 15){
             *wall = iterW;
             return true;
         }
@@ -75,7 +75,7 @@ void zombie_spawner (int time, Zombie_list* zombie_list, int width,int sor){
         spawn_zombie(zombie_list, pont);
     }
 }
-void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life) {
+void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya, int* life, int* score) {
     Zombi* iter = zombie_list->first;
     bool move = true;
     while(iter != NULL){
@@ -85,6 +85,7 @@ void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya,
             iter = iter->next;
             delete_zombie(del, zombie_list);
             move = false;
+            *score += 1;
         }
         /** Novenynel van*/
         Peashooter* p = NULL;
@@ -106,6 +107,7 @@ void zombie_actions(Zombie_list* zombie_list, Novenyek* novenyek, Rects** palya,
             iter = iter->next;
             delete_zombie(del, zombie_list);
             move = false;
+            *life -= 1;
         }
         if(move){
             iter->pozicio.x -= ZOMBIE_MOVE;

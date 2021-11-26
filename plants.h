@@ -10,8 +10,9 @@
  *@file plants.h
  *@brief A n�v�nyekhez kapcsol�d� f�ggv�nyek deklar�ci�ja
  */
-enum {PEASHOOTER_ACTION_TIME = 5};
-enum {SUNFLOWER_ACTION_TIME = 5};
+enum {SUNFLOWER_ACTION_TIME = 750};
+enum {PEASHOOTER_ACTION_TIME = 50};
+
 void spawn_peashooter(Pont pont, Peashooter_list* peashooter_list);
 void spawn_wallnut(Pont pont, Wallnut_list* wallnut_list);
 void spawn_sunflower(Pont pont, Sunflower_list* sunflower_list);

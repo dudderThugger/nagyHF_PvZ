@@ -37,6 +37,7 @@ void sdl_init(char const *felirat, int szeles, int magas, SDL_Window **pwindow, 
         SDL_Log("Nem hozhato letre a kep: %s", SDL_GetError());
         exit(1);
     }
+    TTF_Init();
 
     *pwindow = window;
     *prenderer = renderer;
@@ -53,10 +54,12 @@ int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
 
+    char nev[50];
+    game_start(nev);
+
     Jatek uj;
     uj_jatek(&uj,9,5,640,420);
 
-    uj.napocska = 1000;
     SelectedItem selectedItem = NOTHING;
 
     srand(time(0));
@@ -73,10 +76,22 @@ int main(int argc, char *argv[]) {
     SDL_Texture *textureW = IMG_LoadTexture(renderer, "wallnut.png");
     SDL_Texture *textureZ = IMG_LoadTexture(renderer, "zombie.png");
 
+    TTF_Font *font = TTF_OpenFont("LiberationSerif-Regular.ttf", 60);
+    if (!font) {
+        SDL_Log("Nem sikerult megnyitni a fontot! %s\n", TTF_GetError());
+        exit(1);
+    }
+
+    /** A növenyek spawnolásánal szükséges pointerek, ezeket adjuk át a van_noveny függvénynek*/
+    Peashooter* p = NULL;
+    Sunflower* s = NULL;
+    Wallnut* w = NULL;
     SDL_Rect current_rect;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0);
     SDL_RenderClear(renderer);
     Pont selected;
+    /** Ezt a pontot fogjuk megadni a van_növény függvénynek, hogy ne lehessen ugyanarra a helyre több növényt spawnolni*/
+    Pont novenyhez;
     Uint32 timeCounter = 0;
     bool quit = false;
     bool gameOver = false;
@@ -106,19 +121,19 @@ int main(int argc, char *argv[]) {
             case SDL_MOUSEBUTTONDOWN:
                 switch(selectedItem){
                 case PEASHOOTER:
-                    if(uj.napocska >= 20){
+                    if(uj.napocska >= 100 && !van_noveny(novenyhez,&uj.novenyek,uj.palya,&p,&w,&s)){
                         spawn_peashooter(selected, &uj.novenyek.peashooters_list);
                         uj.napocska -= 100;
                     }
                     break;
                 case WALLNUT:
-                    if(uj.napocska >= 50) {
+                    if(uj.napocska >= 50 && !van_noveny(novenyhez,&uj.novenyek,uj.palya,&p,&w,&s)) {
                         spawn_wallnut(selected, &uj.novenyek.wallnuts_list);
                         uj.napocska -= 50;
                     }
                     break;
                 case SUNFLOWER:
-                    if(uj.napocska >= 25){
+                    if(uj.napocska >= 25 && !van_noveny(novenyhez,&uj.novenyek,uj.palya,&p,&w,&s)){
                         spawn_sunflower(selected, &uj.novenyek.sunflowers_list);
                         uj.napocska -= 25;
                     }
@@ -127,24 +142,30 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 break;
-            case SDL_USEREVENT:                
-                SDL_RenderClear(renderer);  
+            case SDL_USEREVENT:
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);                
+                SDL_RenderClear(renderer);
                 draw_background(renderer,uj.palya, SOR, OSZLOP);
+                draw_HUD(renderer,font,uj.elet,uj.pont,uj.time,uj.w,uj.napocska);
                 draw_peashooters(renderer, uj.palya, &(uj.novenyek.peashooters_list),textureP);
                 draw_sunflowers(renderer, uj.palya, &(uj.novenyek.sunflowers_list),textureS);
                 draw_wallnuts(renderer, uj.palya, &(uj.novenyek.wallnuts_list),textureW);
                 draw_zombies(renderer, uj.palya,&(uj.zombies_list),textureZ);
                 draw_bullets(renderer,&uj.lovedekek_list,uj.palya[0][0].h);
                 selected = get_rect(uj.palya, uj.sor, uj.oszlop, uj.w, uj.h, &current_rect);
+                novenyhez.x = uj.palya[selected.y][selected.x].x;
+                novenyhez.y = selected.y;
                 draw_selectedItem(renderer, current_rect ,selectedItem);
                 SDL_RenderPresent(renderer);
+
                 if(timeCounter == 50){
                     timeCounter = 0;
                     uj.time++;
-                    printf("%d\n",uj.time);
-                    if(uj.time % 20 == 1){
+                    if(uj.time % 10 == 1){
                         zombie_spawner(uj.time,&uj.zombies_list,uj.w, uj.sor);
                     }
+                    if(uj.time == 10)
+                        uj.napocska += 25;
                 }
                  jatek_kor(&uj);
                  timeCounter++;
@@ -154,18 +175,24 @@ int main(int argc, char *argv[]) {
 
             }
         }
-        if(uj.elet <= 0)
-            gameOver = true;
+        if(uj.elet <= 0){
+            SDL_RemoveTimer(id);
+            draw_gameOver(renderer,font,uj.h,uj.w);
+        }
     }
+    if(quit = true && uj.elet > 0)
+        SDL_RemoveTimer(id);
+        
+    game_over(uj.pont,nev);
 
     jatek_felszabadit(&uj);
+    TTF_CloseFont(font);
     SDL_DestroyTexture(textureS);
     SDL_DestroyTexture(textureW);
     SDL_DestroyTexture(textureP);
     SDL_DestroyTexture(textureZ);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    SDL_RemoveTimer(id);
     SDL_Quit();
 
     return 0;

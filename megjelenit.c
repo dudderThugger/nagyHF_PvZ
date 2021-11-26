@@ -7,6 +7,35 @@
  *A háttér kirajzolása, a különbözõ növények kirajzolása és egyéb grafikai függvényeket tartalmaz
  */
 
+void draw_numbers(SDL_Renderer* renderer,TTF_Font* font, char* str, SDL_Rect hova, SDL_Color color){
+    SDL_Surface* felirat = TTF_RenderUTF8_Solid(font, str, color);
+    SDL_Texture* felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+    SDL_RenderCopy(renderer, felirat_t,NULL,&hova);
+    SDL_FreeSurface(felirat);
+    SDL_DestroyTexture(felirat_t);
+}
+
+void draw_HUD(SDL_Renderer* renderer, TTF_Font* font, int life, int score, int time, int width, int napocska){
+    SDL_Rect scoreR = {.x = 10, .y = 0, .h = 60, .w = width/4};
+    SDL_Rect lifeR = {.x = (width/10)*3, .y = 0, .h = 60, .w = width/10};
+    SDL_Rect timeR  = {.x = (width/10)*4.5, .y = 0, .h = 60, .w = width/4};
+    SDL_Rect napocskaR = {.x = (width/10)*7.3, .y = 0, .h = 60, .w = width/4};
+    char scoreS[10] = "";
+    char timeS[10] = "";
+    char lifeS[10];
+    char napocskaS[10];
+    sprintf(scoreS, "%06d", score);
+    sprintf(lifeS, "%d", life);
+    sprintf(timeS, "%02d:%02d",time/60, time%60);
+    sprintf(napocskaS, "%04d", napocska);
+    SDL_Color fekete = {0,0,0};
+    SDL_Color sarga = {255,255,0};
+    SDL_Color piros = {255,0,0};
+    draw_numbers(renderer, font,scoreS,scoreR,fekete);
+    draw_numbers(renderer, font,timeS,timeR,fekete);
+    draw_numbers(renderer, font,napocskaS,napocskaR,sarga);
+    draw_numbers(renderer, font,lifeS,lifeR,piros);
+}
 /**
  *@brief A háttér kirajzolását végzi el
  *
@@ -35,9 +64,6 @@ void draw_background(SDL_Renderer *renderer, Rects** palya, int sor, int oszlop)
         SDL_RenderFillRect(renderer, &temp);
         }
     }
-    SDL_Texture* hud = IMG_LoadTexture(renderer,"hud.png");
-    SDL_Rect hud_rect = {.x = 0, .y = 0, .h = 60, .w = 640};
-    SDL_RenderCopy(renderer,hud,NULL,&hud_rect);
 }
 /**
  *@brief Az összes peashooter kirajzolását végző függvény
@@ -162,6 +188,16 @@ void draw_selectedItem(SDL_Renderer* renderer, SDL_Rect rect, SelectedItem selec
     SDL_DestroyTexture(peashooter);
     SDL_DestroyTexture(wallnut);
     SDL_DestroyTexture(sunflower);
+}
+
+void draw_gameOver(SDL_Renderer* renderer, TTF_Font* font,int height, int width){
+    char str[] = "Game Over";
+    SDL_Rect rect = {.x = 0,.y=0,.h = height, .w = width};
+    SDL_Color color = {.r= 255, .g=0,.b = 0, .a= 255};
+    SDL_SetRenderDrawColor(renderer,0,0,0,255);
+    SDL_RenderClear(renderer);
+    draw_numbers(renderer,font,str,rect,color);
+    SDL_RenderPresent(renderer);
 }
 /**
  *@brief A lövedékek kirajzolását végző függvény

@@ -67,7 +67,7 @@ void lovedek_mozog(Lovedek_list* lovedekek_list, Zombie_list* zombik_list, int s
         Zombi* iterZ = zombik_list->first;
         /** A lövedék zombinál van*/
         while(iterZ != NULL && mozog){
-            if(iterZ->pozicio.x - iterL->pozicio.x <= 5 && iterL->pozicio.y == iterZ->pozicio.y){
+            if(iterZ->pozicio.x - iterL->pozicio.x <= 8 && iterL->pozicio.y == iterZ->pozicio.y){
                 Lovedek* del = iterL;
                 iterL = iterL->next;
                 lovedek_torol(del,lovedekek_list);

@@ -4,7 +4,7 @@
  *@file bullets.h
  *@brief Lï¿½vedï¿½kekhez kapcsolï¿½dï¿½ fï¿½ggvï¿½nyek deklarï¿½ciï¿½ja
  */
-enum {BULLET_SPEED = 10};
+enum {BULLET_SPEED = 5};
 void spawn_lovedek(Pont poz, Lovedek_list* lovedekek_list);
 void lovedek_mozog(Lovedek_list* lovedekek_list, Zombie_list* zombik_list, int sor);
 
